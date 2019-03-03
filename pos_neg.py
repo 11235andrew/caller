@@ -16,7 +16,7 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
         rec_dict = record.__dict__
         samples = []
         for call in rec_dict['samples']:
-            sample = call.__str__()
+            sample = call.__dict__
             samples.append(sample)
 #        for key in rec_dict:
 #            rec_dict[key] = rec_dict[key].__str__()
