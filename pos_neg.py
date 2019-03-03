@@ -15,11 +15,11 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
         #rec = record.__str__()
         rec_dict = record.__dict__
         samples = []
-        for call in rec_dict['samples']:
-            sample = call.__str__()
-            samples.append(sample)
-            #if type(rec_dict[key]) not in [str,  int,  list,  dict,  float] and rec_dict[key] is not None:
-            #rec_dict[key] = rec_dict[key].__str__()
+#        for call in rec_dict['samples']:
+#            sample = call.__str__()
+#            samples.append(sample)
+        for key in rec_dict:
+            rec_dict[key] = rec_dict[key].__str__()
         rec_dict['samples'] = samples
         calls.append(rec_dict)
         count += 1
