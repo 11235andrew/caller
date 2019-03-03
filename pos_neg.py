@@ -19,7 +19,7 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
     vcf_file.close()
     
     try:
-        f_negative_file = open(f_negative_file_name, 'r')
+        f_negative_file = open(f_negative_file_name, 'w')
     except IOError:
         print('File "' + f_negative_file_name + '" not found.')
         return
