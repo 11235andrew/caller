@@ -50,7 +50,7 @@ def find_false_negative(vcf_file_name,  f_negative_file_name,  f_positive_file_n
             else:
                 GT = sample.data.GT
                 if GT in ['0/1',  '0/1', '1/1']:
-                    rec_p['own'].append(sample.sample)
+                    rec_p['owns'].append(sample.sample)
         if rec_p['owns'] != []:
             f_pos.append(str(rec_n))
         if rec_n['owns'] !=  []:
