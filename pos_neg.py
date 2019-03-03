@@ -12,12 +12,12 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
     calls = []
     count = 0
     for record in vcf_reader:
-        rec = record.__str__
+        #rec = record.__str__()
 #        rec_dict = record.__dict__
 #        for key in rec_dict:
 #            if type(rec_dict[key]) not in [str,  int,  list,  dict,  float] and rec_dict[key] is not None:
 #                rec_dict[key] = rec_dict[key].__dict__
-        calls.append(rec)
+        calls.append(record)
         count += 1
         if count > 10:
             break
