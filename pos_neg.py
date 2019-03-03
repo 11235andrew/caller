@@ -32,6 +32,6 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
 
 if __name__ == '__main__':
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
-    f_negative_file_name = '/home/andrey/work/Caller/case_187/false_negative_bgm0187.vcf'
+    f_negative_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_bgm0187.vcf'
     find_false_negative(vcf_file_name,  f_negative_file_name)
     print('Ok.')
