@@ -12,12 +12,12 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
     calls = []
     count = 0
     for record in vcf_reader:
-        rec = record.__str__()
-#        rec_dict = record.__dict__
-#        for key in rec_dict:
-#            if type(rec_dict[key]) not in [str,  int,  list,  dict,  float] and rec_dict[key] is not None:
-#                rec_dict[key] = rec_dict[key].__dict__
-        calls.append(rec)
+        #rec = record.__str__()
+        rec_dict = record.__dict__
+        for key in rec_dict:
+            #if type(rec_dict[key]) not in [str,  int,  list,  dict,  float] and rec_dict[key] is not None:
+            rec_dict[key] = rec_dict[key].__str__()
+        calls.append(rec_dict)
         count += 1
         if count > 10:
             break
@@ -37,6 +37,6 @@ def find_false_negative(vcf_file_name,  f_negative_file_name):
 
 if __name__ == '__main__':
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
-    f_negative_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_bgm0187.vcf'
+    f_negative_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_bgm0187.json'
     find_false_negative(vcf_file_name,  f_negative_file_name)
     print('Ok.')
