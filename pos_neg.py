@@ -33,7 +33,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     vcf_reader = vcf.Reader(vcf_file)
     pos_neg = []
     count = 0
-    min_fr = 1000000
+    max_qual = 0
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -45,6 +45,8 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             if fr < 0.01:
                 flag = True
         if not flag:
+            continue
+        if record.QUAL < 500000:
             continue
         rec = {}
         rec['CHROM'] = record.CHROM
