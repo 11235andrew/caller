@@ -48,6 +48,8 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             continue
         if record.QUAL < 500000:
             continue
+        if record.QUAL > max_qual:
+            max_qual = record.QUAL
         rec = {}
         rec['CHROM'] = record.CHROM
         rec['POS'] = record.POS
@@ -69,7 +71,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
-    print('Minimal frequance is ' + str(min_fr))
+    print('Minimal frequance is ' + str(max_qual))
     print(str(len(pos_neg)) + ' variants were found.')
     
     vcf_file.close()
