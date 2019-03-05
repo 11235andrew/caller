@@ -39,9 +39,11 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             print('Record #' + str(count))
         if record.CHROM == 'chrM':
             continue
+        s = 0
         for fr in record.INFO['AF']:
-            if fr > 0.01:
-                continue
+            s += fr
+        if s > 0.01:
+            continue
         rec = {}
         rec['CHROM'] = record.CHROM
         rec['POS'] = record.POS
@@ -53,17 +55,17 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             if au == 'u':
                 AD = sample.data.AD
                 if AD[1] > 0:
-                    rec['owns'].append(sample.sample)
+                    rec['owns'].append(sample.sample + str(AD))
             else:
                 GT = sample.data.GT
                 if GT in ['0/1',  '0/1', '1/1']:
-                    rec['owns'].append(sample.sample)
+                    rec['owns'].append(sample.sample + str(AD))
         if rec['owns'] !=  []:
             pos_neg.append(str(rec))
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
-    print(str(len(pos_neg)) + ' varients were found.')
+    print(str(len(pos_neg)) + ' variants were found.')
     
     vcf_file.close()
     
