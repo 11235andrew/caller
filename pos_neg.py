@@ -61,7 +61,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             else:
                 GT = sample.data.GT
                 if GT in ['0/1',  '0/1', '1/1']:
-                    rec['owns'].append(sample.sample  + '(' + str(AD[0] + ',' + str(AD[1]) + ')'))
+                    rec['owns'].append(sample.sample  + '(' + GT + ')')
         if rec['owns'] !=  []:
             pos_neg.append(str(rec))
 #    print(str(len(f_neg)) + ' false negative records were found.')
