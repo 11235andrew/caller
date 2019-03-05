@@ -33,6 +33,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     vcf_reader = vcf.Reader(vcf_file)
     pos_neg = []
     count = 0
+    min_fr = 1000000
     for record in vcf_reader:
         count += 1
         if count % 100 == 0:
@@ -42,7 +43,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         s = 0
         for fr in record.INFO['AF']:
             s += fr
-        if s > 0.01:
+        if fr < min_fr:
+            min_fr = fr
+        if s > 0.1:
             continue
         rec = {}
         rec['CHROM'] = record.CHROM
@@ -65,6 +68,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
+    print('Minimal frequance is ' + str(min_fr))
     print(str(len(pos_neg)) + ' variants were found.')
     
     vcf_file.close()
