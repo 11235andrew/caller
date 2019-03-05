@@ -40,12 +40,12 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         if record.CHROM == 'chrM':
             continue
         for fr in record.AF:
-            if record.AF > 0.01:
+            if record.INFO.AF > 0.01:
                 continue
         rec = {}
         rec['CHROM'] = record.CHROM
         rec['POS'] = record.POS
-        rec['AF'] = ','.join(record.AF)
+        rec['AF'] = ','.join(record.INFO.AF)
         rec['QUAL'] = record.QUAL
         rec['owns'] = []
         for sample in record.samples:
