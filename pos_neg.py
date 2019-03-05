@@ -39,8 +39,8 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             print('Record #' + str(count))
         if record.CHROM == 'chrM':
             continue
-        for fr in record.AF:
-            if record.INFO.AF > 0.01:
+        for fr in record.INFO.AF:
+            if fr > 0.01:
                 continue
         rec = {}
         rec['CHROM'] = record.CHROM
