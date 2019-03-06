@@ -81,7 +81,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         rec['CHROM'] = record.CHROM
         rec['POS'] = record.POS
         rec['AF'] = str(record.INFO['AF'])
-        rec['QUAL'] = record.QUAL
+        #rec['QUAL'] = record.QUAL
+        rec['FS'] = record.INFO['FS']
+        rec['QD'] = record.INFO['QD']
         rec['owns'] = []
         for sample in record.samples:
             au = sample.sample[-2]
