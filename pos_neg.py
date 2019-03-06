@@ -38,6 +38,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     gq = 0
     qd = 0
     fs = 0
+    freq = 0
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -53,6 +54,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 flag = True
         if not flag:
             continue
+        freq += 1
         #if record.QUAL < 500000:
         #    continue
         if record.QUAL > max_qual:
@@ -93,6 +95,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
     print('Maximal Quality is ' + str(max_qual))
+    print('Allele freqency < 0.01: ' + str(freq) + ' variants.')
     print('GQ_MEAN > 20: ' + str(gq) + ' variants.')
     print('QD > 4: ' + str(qd) + ' variants.')
     print('FS < 30: ' + str(fs) + ' variants.')
