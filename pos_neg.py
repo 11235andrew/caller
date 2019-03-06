@@ -39,6 +39,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     qd = 0
     fs = 0
     freq = 0
+    pass_f = 0
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -46,6 +47,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         for flt in record.FILTER:
             if flt not in filters:
                 filters.append(flt)
+        if record.FILTER != []:
+            continue
+        pass_f += 1
         if record.CHROM == 'chrM':
             continue
         flag = False
@@ -96,6 +100,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     #print(str(len(intersection(f_neg,  f_pos))))
     print('Maximal Quality is ' + str(max_qual))
     print('Allele freqency < 0.01: ' + str(freq) + ' variants.')
+    print('Quality_PASS: ' + str(pass_f) + ' variants.')
     print('GQ_MEAN > 20: ' + str(gq) + ' variants.')
     print('QD > 4: ' + str(qd) + ' variants.')
     print('FS < 30: ' + str(fs) + ' variants.')
