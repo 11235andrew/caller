@@ -39,6 +39,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         count += 1
         if count % 1000 == 0:
             print('Record #' + str(count))
+        for flt in record.FILTER:
+            if flt not in filters:
+                filters.append(flt)
         if record.CHROM == 'chrM':
             continue
         flag = False
@@ -49,9 +52,6 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             continue
         if record.QUAL < 500000:
             continue
-        for flt in record.FILTER:
-            if flt not in filters:
-                filters.append(flt)
         if record.QUAL > max_qual:
             max_qual = record.QUAL
         rec = {}
