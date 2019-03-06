@@ -35,6 +35,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     count = 0
     max_qual = 0
     filters = []
+    gq = 0
+    qd = 0
+    fs = 0
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -50,10 +53,24 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 flag = True
         if not flag:
             continue
-        if record.QUAL < 500000:
-            continue
+        #if record.QUAL < 500000:
+        #    continue
         if record.QUAL > max_qual:
             max_qual = record.QUAL
+        
+        if record.INFO['GQ_MEAN'] > 20:
+            gq += 1
+        else:
+            continue
+        if record.INFO['QD'] > 4:
+            qd += 1
+        else:
+            continue
+        if record.INFO['FS'] < 30:
+            fs += 1
+        else:
+            continue
+        
         rec = {}
         rec['CHROM'] = record.CHROM
         rec['POS'] = record.POS
