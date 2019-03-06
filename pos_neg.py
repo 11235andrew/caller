@@ -34,6 +34,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     pos_neg = []
     count = 0
     max_qual = 0
+    filters = []
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -48,6 +49,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             continue
         if record.QUAL < 500000:
             continue
+        for flt in record.FILTER:
+            if flt not in filters:
+                filters.append(flt)
         if record.QUAL > max_qual:
             max_qual = record.QUAL
         rec = {}
@@ -71,19 +75,14 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
-    print('Minimal frequance is ' + str(max_qual))
+    print('Maximal Quality is ' + str(max_qual))
     print(str(len(pos_neg)) + ' variants were found.')
     
     vcf_file.close()
     
     
-    try:
-        cand_file = open(cand_file_name, 'w')
-    except IOError:
-        print('File "' + cand_file_name + '" not found.')
-        return
-    cand_file.write(json.dumps(pos_neg,  indent=4))
-    cand_file.close()
+    print_to_file(pos_neg,  cand_file_name)
+    print_to_file(filters,  'case_187/filters.json')
     
 #    try:
 #        f_negative_file = open(f_negative_file_name, 'w')
@@ -102,8 +101,14 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    f_positive_file.close()
     
 
-
-
+def print_to_file(data,  file_name):
+    try:
+        data_file = open(file_name, 'w')
+    except IOError:
+        print('File "' + file_name + '" not found.')
+        return
+    data_file.write(json.dumps(data,  indent=4))
+    data_file.close()
 
 
 if __name__ == '__main__':
