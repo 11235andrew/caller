@@ -87,17 +87,18 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         rec['owns'] = []
         for sample in record.samples:
             au = sample.sample[-2]
+            GT = sample.data.GT
+            AD = sample.data.AD
             GQ = sample.data.GQ
             if GQ is None:
                 continue
+            line = '(AD:' + str(AD[0]) + ',' + str(AD[1]) + '; GQ:' + str(GQ) + ', GT:' + GT + ')'
             if au == 'u':
-                AD = sample.data.AD
-                if AD[1] == 0 and GQ > 20:
-                    rec['owns'].append(sample.sample + '(AD:' + str(AD[0]) + ',' + str(AD[1]) + '; GQ:' + str(GQ) + ')')
+                if GT == '0/0' and GQ > 20:
+                    rec['owns'].append(sample.sample + line)
             else:
-                GT = sample.data.GT
                 if GT in ['0/1',  '0/1', '1/1'] and GQ > 20:
-                    rec['owns'].append(sample.sample  + '(GT:' + GT + '; GQ:' + str(GQ) + ')')
+                    rec['owns'].append(sample.sample  + line)
         if len(rec['owns']) ==  len(record.samples):
             pos_neg.append(str(rec))
 #    print(str(len(f_neg)) + ' false negative records were found.')
