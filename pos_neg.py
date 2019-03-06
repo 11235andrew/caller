@@ -92,7 +92,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 continue
             if au == 'u':
                 AD = sample.data.AD
-                if AD[1] > 0 and GQ > 20:
+                if AD[1] == 0 and GQ > 20:
                     rec['owns'].append(sample.sample + '(AD:' + str(AD[0]) + ',' + str(AD[1]) + '; GQ:' + str(GQ) + ')')
             else:
                 GT = sample.data.GT
