@@ -44,7 +44,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         count += 1
         if count % 1000 == 0:
             print('Record #' + str(count))
-        if record.CHROM == 'chrM':
+        if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
             continue
         flag = False
         for fr in record.INFO['AF']:
@@ -88,6 +88,8 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         for sample in record.samples:
             au = sample.sample[-2]
             GQ = sample.data.GQ
+            if GQ is None:
+                continue
             if au == 'u':
                 AD = sample.data.AD
                 if AD[1] > 0 and GQ > 20:
@@ -96,7 +98,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 GT = sample.data.GT
                 if GT in ['0/1',  '0/1', '1/1'] and GQ > 20:
                     rec['owns'].append(sample.sample  + '(GT:' + GT + '; GQ:' + str(GQ) + ')')
-        if rec['owns'] !=  []:
+        if len(rec['owns']) ==  len(record.samples):
             pos_neg.append(str(rec))
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
