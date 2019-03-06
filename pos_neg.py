@@ -44,21 +44,21 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         count += 1
         if count % 1000 == 0:
             print('Record #' + str(count))
+        if record.CHROM == 'chrM':
+            continue
+#        flag = False
+        for fr in record.INFO['AF']:
+            if fr > 0.01:
+                continue
+#        if not flag:
+#            continue
+        freq += 1
         for flt in record.FILTER:
             if flt not in filters:
                 filters.append(flt)
         if record.FILTER != []:
             continue
         pass_f += 1
-        if record.CHROM == 'chrM':
-            continue
-        flag = False
-        for fr in record.INFO['AF']:
-            if fr < 0.01:
-                flag = True
-        if not flag:
-            continue
-        freq += 1
         #if record.QUAL < 500000:
         #    continue
         if record.QUAL > max_qual:
