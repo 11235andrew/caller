@@ -93,6 +93,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
     print('Maximal Quality is ' + str(max_qual))
+    print('GQ_MEAN > 20: ' + str(gq) + ' variants.')
+    print('QD > 4: ' + str(qd) + ' variants.')
+    print('FS < 30: ' + str(fs) + ' variants.')
     print(str(len(pos_neg)) + ' variants were found.')
     
     vcf_file.close()
