@@ -48,9 +48,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             continue
         flag = False
         for fr in record.INFO['AF']:
-            if fr > 0.01:
+            if fr < 0.01:
                 flag = True
-        if flag:
+        if not flag:
             continue
         freq += 1
         for flt in record.FILTER:
@@ -64,10 +64,10 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         if record.QUAL > max_qual:
             max_qual = record.QUAL
         
-        if 'GQ_MEAN' in record.INFO and record.INFO['GQ_MEAN'] > 20:
-            gq += 1
-        else:
-            continue
+#        if 'GQ_MEAN' in record.INFO and record.INFO['GQ_MEAN'] > 20:
+#            gq += 1
+#        else:
+#            continue
         if 'QD' in record.INFO and record.INFO['QD'] > 4:
             qd += 1
         else:
@@ -85,13 +85,14 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         rec['owns'] = []
         for sample in record.samples:
             au = sample.sample[-2]
+            GQ = sample.data.GQ
             if au == 'u':
                 AD = sample.data.AD
-                if AD[1] > 0:
+                if AD[1] > 0 and GQ > 20:
                     rec['owns'].append(sample.sample + '(' + str(AD[0]) + ',' + str(AD[1]) + ')')
             else:
                 GT = sample.data.GT
-                if GT in ['0/1',  '0/1', '1/1']:
+                if GT in ['0/1',  '0/1', '1/1'] and GQ > 20:
                     rec['owns'].append(sample.sample  + '(' + GT + ')')
         if rec['owns'] !=  []:
             pos_neg.append(str(rec))
