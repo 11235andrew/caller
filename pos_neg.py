@@ -58,15 +58,15 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         if record.QUAL > max_qual:
             max_qual = record.QUAL
         
-        if record.INFO['GQ_MEAN'] > 20:
+        if 'GQ_MEAN' in record.INFO and record.INFO['GQ_MEAN'] > 20:
             gq += 1
         else:
             continue
-        if record.INFO['QD'] > 4:
+        if 'QD' in record.INFO and record.INFO['QD'] > 4:
             qd += 1
         else:
             continue
-        if record.INFO['FS'] < 30:
+        if 'FS' in record.INFO and record.INFO['FS'] < 30:
             fs += 1
         else:
             continue
