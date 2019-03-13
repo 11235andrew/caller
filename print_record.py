@@ -22,7 +22,7 @@ def print_record(record):
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print('Use following format: python print_record.py CHROM POS')
-        return
+        sys.exit()
     chm = sys.argv[1]
     pos = sys.argv[2]
     
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         vcf_file = open(vcf_file_name, 'r')
     except IOError:
         print('File "' + vcf_file_name + '" not found.')
-        return
+        sys.exit()
     
     vcf_reader = vcf.Reader(vcf_file)
     for record in vcf_reader:
@@ -44,6 +44,6 @@ if __name__ == '__main__':
         record_file.close()
         vcf_file.close()
         print('Ok.')
-        return
+        sys.exit()
     vcf_file.close()
     print('record CHROM=' + chm + ', POS=' + pos + 'not found.')
