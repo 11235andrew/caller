@@ -1,19 +1,7 @@
 import vcf
 import json
 
-def print_record(record):
-    rec_dict = record.__dict__
-    samples = []
-    for call in rec_dict['samples']:
-        sample = call.__dict__
-        samples.append(sample)
-#        for key in rec_dict:
-#            rec_dict[key] = rec_dict[key].__str__()
-    rec_dict['samples'] = samples
-    rec_dict['alleles'] = rec_dict['alleles'].__str__()
-    rec_dict['ALT'] = rec_dict['ALT'].__str__()
-    res = json.dumps(rec_dict,  indent=4)
-    return res
+
     
     
 def intersection(list1,  list2):
@@ -54,9 +42,6 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 alls.append(all)
 #        if not flag:
 #            continue
-        # Delete it!!!
-        if len(record.INFO['AF']) < 2:
-            continue
         freq += 1
         for flt in record.FILTER:
             if flt not in filters:
@@ -69,10 +54,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         if record.QUAL > max_qual:
             max_qual = record.QUAL
         
-#        if 'GQ_MEAN' in record.INFO and record.INFO['GQ_MEAN'] > 20:
-#            gq += 1
-#        else:
-#            continue
+
         if 'QD' in record.INFO and record.INFO['QD'] > 4:
             qd += 1
         else:
@@ -103,7 +85,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                     if GT == '0/0' and GQ > 20:
                         rec['owns'].append(sample.sample + line)
                 else:
-                    if GT in ['0/1',  '0/1', '1/1'] and GQ > 20 and AD[all + 1] > 0:
+                    if GT in ['0/1',  '0/1', '1/1'] and GQ > 20:
                         rec['owns'].append(sample.sample  + line)
             if len(rec['owns']) ==  len(record.samples):
                 pos_neg.append(str(rec))
