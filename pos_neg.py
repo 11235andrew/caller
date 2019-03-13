@@ -46,12 +46,14 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             print('Record #' + str(count))
         if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
             continue
-        flag = False
-        for fr in record.INFO['AF']:
-            if fr < 0.01:
-                flag = True
-        if not flag:
-            continue
+        #flag = False
+        alls = []
+        for all in range(len(record.INFO['AF'])):
+            if record.INFO['AF'][all] < 0.01:
+                #flag = True
+                alls.append(all)
+#        if not flag:
+#            continue
         # Delete it!!!
         if len(record.INFO['AF']) < 2:
             continue
@@ -87,23 +89,25 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         #rec['QUAL'] = record.QUAL
         rec['FS'] = record.INFO['FS']
         rec['QD'] = record.INFO['QD']
-        rec['owns'] = []
-        for sample in record.samples:
-            au = sample.sample[-2]
-            GT = sample.data.GT
-            AD = sample.data.AD
-            GQ = sample.data.GQ
-            if GQ is None:
-                continue
-            line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
-            if au == 'u':
-                if GT == '0/0' and GQ > 20:
-                    rec['owns'].append(sample.sample + line)
-            else:
-                if GT in ['0/1',  '0/1', '1/1'] and GQ > 20:
-                    rec['owns'].append(sample.sample  + line)
-        if len(rec['owns']) ==  len(record.samples):
-            pos_neg.append(str(rec))
+        for all in alls:
+            rec['owns'] = []
+            for sample in record.samples:
+                au = sample.sample[-2]
+                GT = sample.data.GT
+                AD = sample.data.AD
+                GQ = sample.data.GQ
+                if GQ is None:
+                    continue
+                line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
+                if au == 'u':
+                    if GT == '0/0' and GQ > 20:
+                        rec['owns'].append(sample.sample + line)
+                else:
+                    if GT in ['0/1',  '0/1', '1/1'] and GQ > 20 and AD[all + 1] > 0:
+                        rec['owns'].append(sample.sample  + line)
+            if len(rec['owns']) ==  len(record.samples):
+                pos_neg.append(str(rec))
+                break
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
