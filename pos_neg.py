@@ -52,6 +52,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 flag = True
         if not flag:
             continue
+        # Delete it!!!
+        if len(record.INFO['AF']) < 2:
+            continue
         freq += 1
         for flt in record.FILTER:
             if flt not in filters:
@@ -92,7 +95,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             GQ = sample.data.GQ
             if GQ is None:
                 continue
-            line = '(AD:' + str(AD[0]) + ',' + str(AD[1]) + '; GQ:' + str(GQ) + ', GT:' + GT + ')'
+            line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
             if au == 'u':
                 if GT == '0/0' and GQ > 20:
                     rec['owns'].append(sample.sample + line)
