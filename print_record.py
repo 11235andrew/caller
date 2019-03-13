@@ -6,7 +6,7 @@ def print_record(record):
     rec_dict = record.__dict__
     samples = []
     for call in rec_dict['samples']:
-        sample = call.__dict__
+        sample = call.__str__()
         samples.append(sample)
 #        for key in rec_dict:
 #            rec_dict[key] = rec_dict[key].__str__()
