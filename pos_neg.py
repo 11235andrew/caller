@@ -3,15 +3,20 @@ import json
 import gzip
 
 
-def get_frequency(chrm,  pos):
+def get_frequency():
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
+    AFs = {}
     with gzip.open(gnomad, "rb") as inp:
         for line in inp:
             rec_data = json.loads(line)
-            if rec_data['Start_Pos'] == pos and rec_data['Chromosome'] == chrm:
-                inp.close()
-                return rec_data['gnomAD_AF']
+            if rec_data['Chromosome'] != 'chr1':
+                continue
+            AFs[str(rec_data['Start_Pos'])] = rec_data['gnomAD_AF']
+#            if rec_data['Start_Pos'] == pos and rec_data['Chromosome'] == chrm:
+#                inp.close()
+#                return rec_data['gnomAD_AF']
     inp.close()
+    return AFs
     
 def intersection(list1,  list2):
     res = []
@@ -37,6 +42,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     fs = 0
     freq = 0
     pass_f = 0
+    AFs = get_frequency()
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -97,9 +103,10 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             if len(rec['owns']) ==  len(record.samples):
                 pos_neg.append(str(rec))
                 break
-        frequency = get_frequency(record.CHROM,  str(record.POS))
-        if frequency is None or frequency>0.01:
-            continue
+        
+            frequency = AFs[str(record.POS)]
+            if frequency is None or frequency>0.01:
+                continue
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
