@@ -95,6 +95,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         #rec['QUAL'] = record.QUAL
         rec['FS'] = record.INFO['FS']
         rec['QD'] = record.INFO['QD']
+        rec['gnomAD_AF'] = AFs[str(record.POS)]
         for all in alls:
             rec['owns'] = []
             for sample in record.samples:
