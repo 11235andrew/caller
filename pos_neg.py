@@ -9,8 +9,9 @@ def get_frequency(chrm,  pos):
         for line in inp:
             rec_data = json.loads(line)
             if rec_data['Start_Pos'] == pos and rec_data['Chromosome'] == chrm:
-                gzip.close()
+                inp.close()
                 return rec_data['gnomAD_AF']
+    inp.close()
     
 def intersection(list1,  list2):
     res = []
