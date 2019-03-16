@@ -13,6 +13,7 @@ def print_record(record):
     rec_dict['samples'] = samples
     rec_dict['alleles'] = rec_dict['alleles'].__str__()
     rec_dict['ALT'] = rec_dict['ALT'].__str__()
+    rec_dict['aaf'] = record.aaf
     res = json.dumps(rec_dict,  indent=4)
     return res
 
