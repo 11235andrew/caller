@@ -29,7 +29,7 @@ def print_record(record):
     rec_dict['alleles'] = rec_dict['alleles'].__str__()
     rec_dict['ALT'] = rec_dict['ALT'].__str__()
     #res = json.dumps(rec_dict,  indent=4)
-    return res
+    return rec_dict
 
 
 def print_to_file(data,  file_name):
