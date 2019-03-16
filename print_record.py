@@ -1,24 +1,45 @@
 import sys
 import vcf
 import json
+import gzip
+
+
+def print_gnomAD(chrm,  pos):
+    gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
+    with gzip.open(gnomad, "rb") as inp:
+        for line in inp:
+            rec_data = json.loads(line)
+            if str(rec_data['Start_Pos']) == pos and rec_data['Chromosome'] == chrm:
+                inp.close()
+                return rec_data
+    inp.close()
 
 def print_record(record):
     rec_dict = record.__dict__
     rec_dict['aaf'] = record.aaf
     rec_dict['heterozygosity'] = record.heterozygosity
     samples = []
+    hets = []
     for call in rec_dict['samples']:
         sample = call.__str__()
+        hets.append(call.is_het)
         samples.append(sample)
-#        for key in rec_dict:
-#            rec_dict[key] = rec_dict[key].__str__()
+    rec_dict['hets'] = hets
     rec_dict['samples'] = samples
     rec_dict['alleles'] = rec_dict['alleles'].__str__()
     rec_dict['ALT'] = rec_dict['ALT'].__str__()
-    res = json.dumps(rec_dict,  indent=4)
+    #res = json.dumps(rec_dict,  indent=4)
     return res
 
 
+def print_to_file(data,  file_name):
+    try:
+        data_file = open(file_name, 'w')
+    except IOError:
+        print('File "' + file_name + '" not found.')
+        return
+    data_file.write(json.dumps(data,  indent=4))
+    data_file.close()
 
 
 if __name__ == '__main__':
@@ -42,9 +63,16 @@ if __name__ == '__main__':
         res = print_record(record)
         record_file_name = '/home/andrey/work/Caller/caller/case_187/record.json'
         record_file = open(record_file_name,  'w')
-        record_file.write(res)
-        record_file.close()
+        print_to_file(res,  record_file_name)
         vcf_file.close()
+        
+        freq = print_gnomAD(chm,  pos)
+        if freq is None:
+            print('Record in GnomAD for this variant is not found.')
+        else:
+            gnomAD_file_name = '/home/andrey/work/Caller/caller/case_187/gnomAD.json'
+            print_to_file(freq,  gnomAD_file_name)
+        
         print('Ok.')
         sys.exit()
     vcf_file.close()

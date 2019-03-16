@@ -2,7 +2,14 @@ import vcf
 import json
 
 
-    
+def get_frequancy(chrm,  pos):
+    ghomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
+    with gzip.open(gnomad, "rb") as inp:
+        for line in inp:
+            rec_data = json.loads(line)
+            if rec_data['Start_Pos'] == pos and rec_data['Chromosome'] == chrm:
+                gzip.close()
+                return rec_data['gnomAD_AF']
     
 def intersection(list1,  list2):
     res = []
@@ -36,12 +43,10 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             continue
         #flag = False
         alls = []
-        for all in range(len(record.INFO['AF'])):
-            if record.INFO['AF'][all] < 0.01:
-                #flag = True
-                alls.append(all)
-#        if not flag:
-#            continue
+#        for all in range(len(record.INFO['AF'])):
+#            if record.INFO['AF'][all] < 0.01:
+#                #flag = True
+#                alls.append(all)
         freq += 1
         for flt in record.FILTER:
             if flt not in filters:
