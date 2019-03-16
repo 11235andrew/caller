@@ -43,6 +43,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     freq = 0
     pass_f = 0
     AFs = get_frequency()
+    print('In Gnom_AD ' + str(len(AFs)) + 'records.')
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -104,6 +105,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 pos_neg.append(str(rec))
                 break
         
+        if str(record.POS) in AFs:
             frequency = AFs[str(record.POS)]
             if frequency is None or frequency>0.01:
                 continue
