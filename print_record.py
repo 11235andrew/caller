@@ -4,7 +4,8 @@ import json
 
 def print_record(record):
     rec_dict = record.__dict__
-    rec_dict['aaf'] = record.aaf()
+    rec_dict['aaf'] = record.aaf
+    rec_dict['heterozygosity'] = record.heterozygosity
     samples = []
     for call in rec_dict['samples']:
         sample = call.__str__()
