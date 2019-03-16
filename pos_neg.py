@@ -1,9 +1,10 @@
 import vcf
 import json
+import gzip
 
 
-def get_frequancy(chrm,  pos):
-    ghomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
+def get_frequency(chrm,  pos):
+    gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
     with gzip.open(gnomad, "rb") as inp:
         for line in inp:
             rec_data = json.loads(line)
@@ -42,7 +43,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
             continue
         #flag = False
-        alls = []
+        alls = range(len(record.INFO['AF']))
 #        for all in range(len(record.INFO['AF'])):
 #            if record.INFO['AF'][all] < 0.01:
 #                #flag = True
@@ -95,6 +96,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             if len(rec['owns']) ==  len(record.samples):
                 pos_neg.append(str(rec))
                 break
+        frequency = get_frequency(record.CHROM,  str(record.POS))
+        if frequency is None or frequency>0.01:
+            continue
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
