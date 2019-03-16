@@ -43,13 +43,19 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     freq = 0
     pass_f = 0
     AFs = get_frequency()
-    print('In Gnom_AD ' + str(len(AFs)) + 'records.')
+    print('In Gnom_AD ' + str(len(AFs)) + ' records.')
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
             print('Record #' + str(count))
         if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
             continue
+        
+        if str(record.POS) in AFs:
+            frequency = AFs[str(record.POS)]
+            if frequency is None or frequency>0.01:
+                continue
+        
         #flag = False
         alls = range(len(record.INFO['AF']))
 #        for all in range(len(record.INFO['AF'])):
