@@ -57,11 +57,15 @@ def find_false_negative(vcf_file_name,  cand_file_name):
                 continue
         
         #flag = False
-        alls = range(len(record.INFO['AF']))
-#        for all in range(len(record.INFO['AF'])):
-#            if record.INFO['AF'][all] < 0.01:
-#                #flag = True
-#                alls.append(all)
+        alls = []
+        min_fr = 3
+        min_all = None
+        for all in range(len(record.INFO['AF'])):
+            if record.INFO['AF'][all] < min_fr:
+                min_fr = record.INFO['AF'][all]
+                min_all = all
+        if min_all is not None:
+            alls.append(min_all)
         freq += 1
         for flt in record.FILTER:
             if flt not in filters:
