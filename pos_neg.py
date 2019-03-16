@@ -9,7 +9,7 @@ def get_frequency():
     with gzip.open(gnomad, "rb") as inp:
         for line in inp:
             rec_data = json.loads(line)
-            if rec_data['Chromosome'] != 'chr1':
+            if rec_data['Chromosome'] in ['chrM',  'chrX',  'chrY']:
                 continue
             AFs[str(rec_data['Start_Pos'])] = rec_data['gnomAD_AF']
 #            if rec_data['Start_Pos'] == pos and rec_data['Chromosome'] == chrm:
@@ -42,6 +42,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     fs = 0
     freq = 0
     pass_f = 0
+    in_gnom = 0
     AFs = get_frequency()
     print('In Gnom_AD ' + str(len(AFs)) + ' records.')
     for record in vcf_reader:
@@ -55,6 +56,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
             frequency = AFs[str(record.POS)]
             if frequency is None or frequency>0.01:
                 continue
+        else:
+            continue
+        in_gnom += 1
         
         #flag = False
         alls = []
@@ -126,6 +130,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
+    print('Need variants in gnomAD: ' + str(in_gnom))
     print('Maximal Quality is ' + str(max_qual))
     print('Allele freqency < 0.01: ' + str(freq) + ' variants.')
     print('Quality_PASS: ' + str(pass_f) + ' variants.')
