@@ -6,13 +6,14 @@ import gzip
 
 def print_gnomAD(chrm,  pos):
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
+    recs = []
     with gzip.open(gnomad, "rb") as inp:
         for line in inp:
             rec_data = json.loads(line)
             if str(rec_data['Start_Pos']) == pos and rec_data['Chromosome'] == chrm:
-                inp.close()
-                return rec_data
+                recs.append(rec_data)
     inp.close()
+    return recs
 
 def print_record(record):
     rec_dict = record.__dict__
