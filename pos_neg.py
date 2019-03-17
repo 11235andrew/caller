@@ -22,6 +22,7 @@ def get_frequency(csq,  format,  allele):
     return freq
 
 def get_gnomAD_frequency():
+    print('Research the frequency in gnonAD...')
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
     AFs = {}
     with gzip.open(gnomad, "rb") as inp:
@@ -125,7 +126,7 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
         for all in alls:
             frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
             rec['ExAC_AF'].append(frequency)
-            if frequency is not None or frequency > 0.01:
+            if frequency is None or frequency > 0.01:
                 continue
             rec['owns'] = []
             for sample in record.samples:
