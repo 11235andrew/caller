@@ -33,6 +33,9 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         return
     
     vcf_reader = vcf.Reader(vcf_file)
+    infos = vcf_reader.infos
+    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
+    print_to_file(infos,  infos_file_name)
     pos_neg = []
     count = 0
     max_qual = 0
