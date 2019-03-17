@@ -125,7 +125,7 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
         for all in alls:
             frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
             rec['ExAC_AF'].append(frequency)
-            if frequency is not None and frequency > 0.01:
+            if frequency is not None or frequency > 0.01:
                 continue
             rec['owns'] = []
             for sample in record.samples:
