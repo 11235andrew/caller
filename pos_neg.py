@@ -122,7 +122,7 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
 #        else:
 #            rec['gnomAD_AF'] = 'None'
         for all in alls:
-            frequency = get_frequency(record.INFO['CSQ'], format,  record.ALT[all])
+            frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
             if frequency > 0.01:
                 continue
             rec['owns'] = []
@@ -144,10 +144,10 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
                 pos_neg.append(str(rec))
                 break
         
-        if str(record.POS) in AFs:
-            frequency = AFs[str(record.POS)]
-            if frequency is None or frequency>0.01:
-                continue
+#        if str(record.POS) in AFs:
+#            frequency = AFs[str(record.POS)]
+#            if frequency is None or frequency>0.01:
+#                continue
 #    print(str(len(f_neg)) + ' false negative records were found.')
 #    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
