@@ -49,7 +49,7 @@ def print_record(record,  csq_format):
             print('Defferent lengths: ' + len(format) + ' (format) and ' + len(vert) + ' (csq).')
         else:
             for n in range(len(vert)):
-                csq_dict[format[n]] = csq_dict[vert[n]]
+                csq_dict[format[n]] = vert[n]
             csq.append(csq_dict)
     rec_dict['INFO']['CSQ'] = csq
     return rec_dict
