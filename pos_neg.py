@@ -122,7 +122,7 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
 #        else:
 #            rec['gnomAD_AF'] = 'None'
         for all in alls:
-            frequency = get_frequency(record.INFO['CSQ'], format,  record['ALT'][all])
+            frequency = get_frequency(record.INFO['CSQ'], format,  record.ALT[all])
             if frequency > 0.01:
                 continue
             rec['owns'] = []
