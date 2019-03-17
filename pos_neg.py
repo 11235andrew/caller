@@ -17,7 +17,7 @@ def get_frequency(csq,  format,  allele):
             continue
         if data[n] == '':
             return
-        freq = int(data[n])
+        freq = float(data[n])
         break
     return freq
 
