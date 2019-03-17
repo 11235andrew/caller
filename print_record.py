@@ -4,7 +4,7 @@ import json
 import gzip
 
 
-def infos():
+def infos(vcf_reader):
     infos = vcf_reader.infos
     descr = infos['CSQ'][3]
     place = descr.find('Format')
@@ -72,8 +72,6 @@ if __name__ == '__main__':
     chm = sys.argv[1]
     pos = sys.argv[2]
     
-    format = infos()
-    
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
     try:
         vcf_file = open(vcf_file_name, 'r')
@@ -82,6 +80,7 @@ if __name__ == '__main__':
         sys.exit()
     
     vcf_reader = vcf.Reader(vcf_file)
+    format = infos(vcf_reader)
     for record in vcf_reader:
         if record.CHROM != chm or str(record.POS) != pos:
             continue
