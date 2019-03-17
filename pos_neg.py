@@ -61,8 +61,8 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
     freq = 0
     pass_f = 0
     in_gnom = 0
-    #AFs = get_gnomAD_frequency()
-    #print('In Gnom_AD ' + str(len(AFs)) + ' records.')
+    AFs = get_gnomAD_frequency()
+    print('In Gnom_AD ' + str(len(AFs)) + ' records.')
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -117,12 +117,14 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
         #rec['QUAL'] = record.QUAL
         rec['FS'] = record.INFO['FS']
         rec['QD'] = record.INFO['QD']
-#        if str(record.POS) in AFs:
-#            rec['gnomAD_AF'] = AFs[str(record.POS)]
-#        else:
-#            rec['gnomAD_AF'] = 'None'
+        rec['ExAC_AF'] = []
+        if str(record.POS) in AFs:
+            rec['gnomAD_AF'] = AFs[str(record.POS)]
+        else:
+            rec['gnomAD_AF'] = 'None'
         for all in alls:
             frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
+            rec['ExAC_AF'].append(frequency)
             if frequency > 0.01:
                 continue
             rec['owns'] = []
