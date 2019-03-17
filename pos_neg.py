@@ -3,7 +3,25 @@ import json
 import gzip
 
 
-def get_frequency():
+def get_frequency(csq,  format,  allele):
+    n = None
+    freq = None
+    for n in range(len(format)):
+        if format[n] == 'ExAC_AF':
+            break
+    if n is None or csq == []:
+        return
+    for csq_el in csq:
+        data = csq_el.split('|')
+        if data[0] != allele:
+            continue
+        if data[n] == '':
+            return
+        freq = int(data[n])
+        break
+    return freq
+
+def get_gnomAD_frequency():
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
     AFs = {}
     with gzip.open(gnomad, "rb") as inp:
@@ -25,7 +43,7 @@ def intersection(list1,  list2):
             res.append(el)
     return res
 
-def find_false_negative(vcf_file_name,  cand_file_name):
+def find_false_negative(vcf_file_name,  cand_file_name,  format):
     try:
         vcf_file = open(vcf_file_name, 'r')
     except IOError:
@@ -33,15 +51,6 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         return
     
     vcf_reader = vcf.Reader(vcf_file)
-    infos = vcf_reader.infos
-    descr = infos['CSQ'][3]
-    place = descr.find('Format')
-    format = descr[place + 8:]
-    csq = {}
-    csq['Description'] = descr[:place]
-    csq['Format'] = format.split('|')
-    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
-    print_to_file(csq,  infos_file_name)
     pos_neg = []
     count = 0
     max_qual = 0
@@ -52,8 +61,8 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     freq = 0
     pass_f = 0
     in_gnom = 0
-    AFs = get_frequency()
-    print('In Gnom_AD ' + str(len(AFs)) + ' records.')
+    #AFs = get_gnomAD_frequency()
+    #print('In Gnom_AD ' + str(len(AFs)) + ' records.')
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
@@ -61,24 +70,24 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
             continue
         
-        if str(record.POS) in AFs:
-            frequency = AFs[str(record.POS)]
-            if frequency is None or frequency>0.01:
-                continue
-        else:
-            continue
-        in_gnom += 1
+#        if str(record.POS) in AFs:
+#            frequency = AFs[str(record.POS)]
+#            if frequency is None or frequency>0.01:
+#                continue
+#        else:
+#            continue
+#        in_gnom += 1
         
         #flag = False
-        alls = []
-        min_fr = 3
-        min_all = None
-        for all in range(len(record.INFO['AF'])):
-            if record.INFO['AF'][all] < min_fr:
-                min_fr = record.INFO['AF'][all]
-                min_all = all
-        if min_all is not None:
-            alls.append(min_all)
+        alls = range(len(record.INFO['AF']))
+#        min_fr = 3
+#        min_all = None
+#        for all in range(len(record.INFO['AF'])):
+#            if record.INFO['AF'][all] < min_fr:
+#                min_fr = record.INFO['AF'][all]
+#                min_all = all
+#        if min_all is not None:
+#            alls.append(min_all)
         freq += 1
         for flt in record.FILTER:
             if flt not in filters:
@@ -108,11 +117,14 @@ def find_false_negative(vcf_file_name,  cand_file_name):
         #rec['QUAL'] = record.QUAL
         rec['FS'] = record.INFO['FS']
         rec['QD'] = record.INFO['QD']
-        if str(record.POS) in AFs:
-            rec['gnomAD_AF'] = AFs[str(record.POS)]
-        else:
-            rec['gnomAD_AF'] = 'None'
+#        if str(record.POS) in AFs:
+#            rec['gnomAD_AF'] = AFs[str(record.POS)]
+#        else:
+#            rec['gnomAD_AF'] = 'None'
         for all in alls:
+            frequency = get_frequency(record.INFO['CSQ'], format,  record['ALT'][all])
+            if frequency > 0.01:
+                continue
             rec['owns'] = []
             for sample in record.samples:
                 au = sample.sample[-2]
@@ -186,5 +198,8 @@ if __name__ == '__main__':
     f_negative_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative.json'
     f_positive_file_name = '/home/andrey/work/Caller/caller/case_187/false_positive.json'
     candidats_file_name = '/home/andrey/work/Caller/caller/case_187/candidats.json'
-    find_false_negative(vcf_file_name,  candidats_file_name)
+    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
+    infos = open(infos_file_name,  'r')
+    format = json.loads(infos.read())['Format']
+    find_false_negative(vcf_file_name,  candidats_file_name,  format)
     print('Ok.')
