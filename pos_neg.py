@@ -40,7 +40,7 @@ def find_false_negative(vcf_file_name,  cand_file_name):
     csq = {}
     csq['Description'] = descr[:place]
     csq['Format'] = format.split('|')
-    infos['CSQ'][3] = csq
+    infos['CSQ'] = csq
     infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
     print_to_file(infos,  infos_file_name)
     pos_neg = []
