@@ -1,28 +1,12 @@
 import vcf
 import json
 import gzip
+from print_record import get_frequency
 
 
-def get_frequency(csq,  format,  allele):
-    n = None
-    freq = None
-    for n in range(len(format)):
-        if format[n] == 'ExAC_AF':
-            break
-    if n is None or csq == []:
-        return
-    for csq_el in csq:
-        data = csq_el.split('|')
-        if data[0] != allele:
-            continue
-        if data[n] == '':
-            return
-        freq = float(data[n])
-        break
-    return freq
 
 def get_gnomAD_frequency():
-    print('Research the frequency in gnonAD...')
+    print('Research frequencies in gnomAD...')
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
     AFs = {}
     with gzip.open(gnomad, "rb") as inp:
@@ -204,5 +188,6 @@ if __name__ == '__main__':
     infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
     infos = open(infos_file_name,  'r')
     format = json.loads(infos.read())['Format']
+    infos.close()
     find_false_negative(vcf_file_name,  candidats_file_name,  format)
     print('Ok.')

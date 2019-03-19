@@ -4,6 +4,24 @@ import json
 import gzip
 
 
+def get_frequency(csq,  format,  allele):
+    n = None
+    freq = None
+    for n in range(len(format)):
+        if format[n] == 'ExAC_AF':
+            break
+    if n is None or csq == []:
+        return
+    for csq_el in csq:
+        data = csq_el.split('|')
+        if data[0] != allele:
+            continue
+        if data[n] == '':
+            return
+        freq = float(data[n])
+        break
+    return freq
+
 def infos(vcf_reader):
     infos = vcf_reader.infos
     descr = infos['CSQ'][3]
@@ -27,7 +45,36 @@ def print_gnomAD(chrm,  pos):
     inp.close()
     return recs
 
-def print_record(record,  csq_format):
+def print_short_record(record, freq):
+    res = {}
+    res['CHROM'] = record.CHROM
+    res['POS'] = record.POS
+    res['AF'] = record.INFO['AF']
+    res['gnomAD_AF'] = freq['gnomAD_AF']
+    
+    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
+    infos = open(infos_file_name,  'r')
+    format = json.loads(infos.read())['Format']
+    infos.close()
+    freqs = []
+    exac = []
+    for all in range(len(record.INFO['AF'])):
+        frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
+        freqs.append(frequency)
+        exac_fr = get_frequency(record.INFO['CSQ'], format,  all)
+        exac.append(exac_fr)
+    res['gnomAD_AF'] = freqs
+    res['ExAC_AF'] = exac
+    
+    res['FS'] = record.INFO['FS']
+    res['QD'] = record.INFO['QD']
+    samples = []
+    for sample in record.INFO['samples']:
+        samples.append(str(sample))
+    res['samples'] = samples
+    return res
+
+def print_record(record, freq, format):
     rec_dict = record.__dict__
     rec_dict['aaf'] = record.aaf
     rec_dict['heterozygosity'] = record.heterozygosity
@@ -41,6 +88,7 @@ def print_record(record,  csq_format):
     rec_dict['samples'] = samples
     rec_dict['alleles'] = rec_dict['alleles'].__str__()
     rec_dict['ALT'] = rec_dict['ALT'].__str__()
+    rec_dict['gnomAD_AF'] = freq['gnomAD_AF']
     csq = []
     for data in rec_dict['INFO']['CSQ']:
         vert = data.split('|')
@@ -84,11 +132,6 @@ if __name__ == '__main__':
     for record in vcf_reader:
         if record.CHROM != chm or str(record.POS) != pos:
             continue
-        res = print_record(record,  format)
-        record_file_name = '/home/andrey/work/Caller/caller/case_187/record.json'
-        record_file = open(record_file_name,  'w')
-        print_to_file(res,  record_file_name)
-        vcf_file.close()
         
         freq = print_gnomAD(chm,  pos)
         if freq is None:
@@ -96,6 +139,12 @@ if __name__ == '__main__':
         else:
             gnomAD_file_name = '/home/andrey/work/Caller/caller/case_187/gnomAD.json'
             print_to_file(freq,  gnomAD_file_name)
+        
+        res = print_record(record,  freq)
+        record_file_name = '/home/andrey/work/Caller/caller/case_187/record.json'
+        record_file = open(record_file_name,  'w')
+        print_to_file(res,  record_file_name)
+        vcf_file.close()
         
         print('Ok.')
         sys.exit()
