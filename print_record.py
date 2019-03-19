@@ -56,14 +56,10 @@ def print_short_record(record, freq):
     format = json.loads(infos.read())['Format']
     infos.close()
     freqs = []
-    exac = []
     for all in range(len(record.INFO['AF'])):
         frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
         freqs.append(frequency)
-        exac_fr = get_frequency(record.INFO['CSQ'], format,  all)
-        exac.append(exac_fr)
-    res['gnomAD_AF'] = freqs
-    res['ExAC_AF'] = exac
+    res['ExAC_AF'] = freqs
     
     res['FS'] = record.INFO['FS']
     res['QD'] = record.INFO['QD']
