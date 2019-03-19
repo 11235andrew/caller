@@ -28,7 +28,7 @@ def intersection(list1,  list2):
             res.append(el)
     return res
 
-def find_false_negative(vcf_file_name,  cand_file_name,  format):
+def rude_classificator(vcf_file_name,  cand_file_name,  format,  f_pos_file_name,  f_neg_file_name):
     try:
         vcf_file = open(vcf_file_name, 'r')
     except IOError:
@@ -37,6 +37,8 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
     
     vcf_reader = vcf.Reader(vcf_file)
     pos_neg = []
+    f_pos = []
+    f_neg = []
     count = 0
     max_qual = 0
     filters = []
@@ -113,6 +115,8 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
             if frequency is None or frequency > 0.01:
                 continue
             rec['owns'] = []
+            pos_flag = False
+            neg_flag = True
             for sample in record.samples:
                 au = sample.sample[-2]
                 GT = sample.data.GT
@@ -124,19 +128,26 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
                 if au == 'u':
                     if GT == '0/0' and GQ > 20:
                         rec['owns'].append(sample.sample + line)
+                    if AD[all+1] != 0:
+                        pos_flag = True
                 else:
                     if GT in ['0/1',  '0/1', '1/1'] and GQ > 20:
                         rec['owns'].append(sample.sample  + line)
+                    if AD[all+1] == 0:
+                        neg_flag = False
+            for own in rec['owns']:
+                if own[-2] == 'a' and neg_flag:
+                    f_neg.append(str(rec))
+                    break
             if len(rec['owns']) ==  len(record.samples):
                 pos_neg.append(str(rec))
+                if pos_flag:
+                    f_pos.append(str(rec))
                 break
         
-#        if str(record.POS) in AFs:
-#            frequency = AFs[str(record.POS)]
-#            if frequency is None or frequency>0.01:
-#                continue
-#    print(str(len(f_neg)) + ' false negative records were found.')
-#    print(str(len(f_pos)) + ' false positive records were found.')
+
+    print(str(len(f_neg)) + ' false negative records were found.')
+    print(str(len(f_pos)) + ' false positive records were found.')
     #print(str(len(intersection(f_neg,  f_pos))))
     print('Need variants in gnomAD: ' + str(in_gnom))
     print('Maximal Quality is ' + str(max_qual))
@@ -151,6 +162,8 @@ def find_false_negative(vcf_file_name,  cand_file_name,  format):
     
     
     print_to_file(pos_neg,  cand_file_name)
+    print_to_file(f_pos,  f_pos_file_name)
+    print_to_file(f_neg,  f_neg_file_name)
     print_to_file(filters,  'case_187/filters.json')
     
 #    try:
@@ -189,5 +202,5 @@ if __name__ == '__main__':
     infos = open(infos_file_name,  'r')
     format = json.loads(infos.read())['Format']
     infos.close()
-    find_false_negative(vcf_file_name,  candidats_file_name,  format)
+    rude_classificator(vcf_file_name,  candidats_file_name,  format,  f_positive_file_name,  f_negative_file_name)
     print('Ok.')

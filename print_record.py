@@ -153,4 +153,4 @@ if __name__ == '__main__':
         print('Ok.')
         sys.exit()
     vcf_file.close()
-    print('record CHROM=' + chm + ', POS=' + pos + 'not found.')
+    print('record CHROM=' + chm + ', POS=' + pos + ' not found.')
