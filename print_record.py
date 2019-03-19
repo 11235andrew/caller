@@ -68,7 +68,7 @@ def print_short_record(record, freq):
     res['FS'] = record.INFO['FS']
     res['QD'] = record.INFO['QD']
     samples = []
-    for sample in record.INFO['samples']:
+    for sample in record.samples:
         samples.append(str(sample))
     res['samples'] = samples
     return res
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     pos = sys.argv[2]
     short = False
     if len(sys.argv) == 4:
-        if sys.argv[3] != '-h':
+        if sys.argv[3] != '-s':
             print('Unkown key ' + sys.argv[3])
             sys.exit()
         short = True
