@@ -114,11 +114,17 @@ def print_to_file(data,  file_name):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in [3,  4]:
         print('Use following format: python print_record.py CHROM POS')
         sys.exit()
     chm = sys.argv[1]
     pos = sys.argv[2]
+    short = False
+    if len(sys.argv) == 4:
+        if sys.argv[3] != '-h':
+            print('Unkown key ' + sys.argv[3])
+            sys.exit()
+        short = True
     
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
     try:
@@ -140,7 +146,10 @@ if __name__ == '__main__':
             gnomAD_file_name = '/home/andrey/work/Caller/caller/case_187/gnomAD.json'
             print_to_file(freq,  gnomAD_file_name)
         
-        res = print_record(record,  freq)
+        if short:
+            res = print_short_record(record,  freq)
+        else:
+            res = print_record(record,  freq,  format)
         record_file_name = '/home/andrey/work/Caller/caller/case_187/record.json'
         record_file = open(record_file_name,  'w')
         print_to_file(res,  record_file_name)
