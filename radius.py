@@ -72,8 +72,10 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
         count += 1
         if count % 1000 == 0:
             print('Record #' + str(count))
-        exac = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
-        aproved =  exac is not None and exac > frequency and record.QUAL == []
+        aproved = False
+        for alt in record.ALT:
+            exac = get_frequency(record.INFO['CSQ'], str(alt))
+            aproved = aproved or (exac is not None) and exac > frequency and record.FILTER == []
         main = True
         for sample in record.samples:
             if sample.sample in affected:
