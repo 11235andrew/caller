@@ -29,7 +29,7 @@ def intersection(list1,  list2):
             res.append(el)
     return res
 
-def rude_classificator(vcf_file_name,  cand_file_name,  format,  f_pos_file_name,  f_neg_file_name):
+def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_file_name):
     try:
         vcf_file = open(vcf_file_name, 'r')
     except IOError:
@@ -111,7 +111,7 @@ def rude_classificator(vcf_file_name,  cand_file_name,  format,  f_pos_file_name
         else:
             rec['gnomAD_AF'] = 'None'
         for all in alls:
-            frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
+            frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
             rec['ExAC_AF'].append(frequency)
             if frequency is not None and frequency > 0.01:
                 continue
@@ -175,9 +175,5 @@ if __name__ == '__main__':
     f_negative_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative.json'
     f_positive_file_name = '/home/andrey/work/Caller/caller/case_187/false_positive.json'
     candidats_file_name = '/home/andrey/work/Caller/caller/case_187/candidats.json'
-    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
-    infos = open(infos_file_name,  'r')
-    format = json.loads(infos.read())['Format']
-    infos.close()
-    rude_classificator(vcf_file_name,  candidats_file_name,  format,  f_positive_file_name,  f_negative_file_name)
+    rude_classificator(vcf_file_name,  candidats_file_name,  f_positive_file_name,  f_negative_file_name)
     print('Ok.')
