@@ -26,7 +26,7 @@ def get_boundary(base_variants,  radius, measure, vcf_file_name):
             rec['CHROM'] = variant['CHROM']
             rec['POS'] = variant['POS']
             if measure == 'variants':
-                ind = all_vars[variant['CHROM']][variant['POS']]
+                ind = all_vars[variant['CHROM']].index(variant['POS'])
                 if ind - radius < 0:
                     rec['left'] = all_vars[variant['CHROM']][0]
                 else:
