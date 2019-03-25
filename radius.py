@@ -79,11 +79,11 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
         main = True
         for sample in record.samples:
             if sample.sample in affected:
-                if sample.GT not in ['1/0',  '0/1',  '1/1']:
+                if sample.data.GT not in ['1/0',  '0/1',  '1/1']:
                     main = False
                     break
             if sample.sample in unaffected:
-                if sample.GT in ['1/0',  '0/1',  '1/1']:
+                if sample.data.GT in ['1/0',  '0/1',  '1/1']:
                     main = False
                     break
 
