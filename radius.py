@@ -112,7 +112,7 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
     vcf_file.close()
     
     file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighbourhoods.json'
-    print_to_file(file_name,  boundaries)
+    print_to_file(boundaries,  file_name)
 
 
 
