@@ -4,7 +4,10 @@ import json
 import gzip
 
 
-def get_frequency(csq,  format,  allele):
+def get_frequency(csq, allele):
+    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
+    format = get_json_from_file(infos_file_name)
+    
     n = None
     freq = None
     for n in range(len(format)):
@@ -51,10 +54,7 @@ def print_short_record(record, freq):
     res['AF'] = record.INFO['AF']
     res['gnomAD_AF'] = freq['gnomAD_AF']
     
-    infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
-    infos = open(infos_file_name,  'r')
-    format = json.loads(infos.read())['Format']
-    infos.close()
+   
     freqs = []
     for all in range(len(record.INFO['AF'])):
         frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
@@ -98,6 +98,20 @@ def print_record(record, freq, format):
     return rec_dict
 
 
+def open_file(file_name,  mode):
+    try:
+        file = open(file_name,  mode)
+    except IOError:
+        print('File "' + file_name + '" not found.')
+        sys.exit()
+    return file
+
+def get_json_from_file(file_name):
+    file = open_file(file_name,  'r')
+    data = json.loads(file.read())
+    file.close()
+    return data
+
 def print_to_file(data,  file_name):
     try:
         data_file = open(file_name, 'w')
@@ -122,11 +136,7 @@ if __name__ == '__main__':
         short = True
     
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
-    try:
-        vcf_file = open(vcf_file_name, 'r')
-    except IOError:
-        print('File "' + vcf_file_name + '" not found.')
-        sys.exit()
+    vcf_file = open_file(vcf_file_name, 'r')
     
     vcf_reader = vcf.Reader(vcf_file)
     format = infos(vcf_reader)

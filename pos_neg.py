@@ -2,6 +2,7 @@ import vcf
 import json
 import gzip
 from print_record import get_frequency
+from print_record import print_to_file
 
 
 
@@ -112,7 +113,7 @@ def rude_classificator(vcf_file_name,  cand_file_name,  format,  f_pos_file_name
         for all in alls:
             frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
             rec['ExAC_AF'].append(frequency)
-            if frequency is None or frequency > 0.01:
+            if frequency is not None and frequency > 0.01:
                 continue
             rec['owns'] = []
             pos_flag = False
@@ -138,11 +139,11 @@ def rude_classificator(vcf_file_name,  cand_file_name,  format,  f_pos_file_name
                     if AD[all+1] == 0:
                         neg_flag = False
             if neg_flag2 and neg_flag:
-                f_neg.append(str(rec))
+                f_neg.append(rec)
             if len(rec['owns']) ==  len(record.samples):
                 pos_neg.append(str(rec))
                 if pos_flag:
-                    f_pos.append(str(rec))
+                    f_pos.append(rec)
                 break
         
 
@@ -166,31 +167,7 @@ def rude_classificator(vcf_file_name,  cand_file_name,  format,  f_pos_file_name
     print_to_file(f_neg,  f_neg_file_name)
     print_to_file(filters,  'case_187/filters.json')
     
-#    try:
-#        f_negative_file = open(f_negative_file_name, 'w')
-#    except IOError:
-#        print('File "' + f_negative_file_name + '" not found.')
-#        return
-#    f_negative_file.write(json.dumps(f_neg,  indent=4))
-#    f_negative_file.close()
-#    
-#    try:
-#        f_positive_file = open(f_positive_file_name, 'w')
-#    except IOError:
-#        print('File "' + f_positive_file_name + '" not found.')
-#        return
-#    f_positive_file.write(json.dumps(f_pos,  indent=4))
-#    f_positive_file.close()
-    
 
-def print_to_file(data,  file_name):
-    try:
-        data_file = open(file_name, 'w')
-    except IOError:
-        print('File "' + file_name + '" not found.')
-        return
-    data_file.write(json.dumps(data,  indent=4))
-    data_file.close()
 
 
 if __name__ == '__main__':
