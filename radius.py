@@ -57,6 +57,7 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
     vcf_file = open_file(vcf_file_name,  'r')
     vcf_reader = vcf.Reader(vcf_file)
     count = 0
+    current = 0
     for bound in boundaries:
         bound['aproved_at_the_right'] = 0
         bound['aproved_at_the_left'] = 0
@@ -86,10 +87,19 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
                 if sample.data.GT in ['1/0',  '0/1',  '1/1']:
                     main = False
                     break
-
-        for bound in boundaries:
+        
+        after = False
+        n_bound = current
+        current0 = current
+        for bound in boundaries[current0:]:
             if bound['CHROM'] != record.CHROM or bound['left'] > record.POS or bound['right'] < record.POS:
-                continue
+                if after:
+                    break
+                else:
+                    current = n_bound
+            else:
+                after = True
+            n_bound += 1
             if record.POS < bound['POS']:
                 if aproved:
                     bound['aproved_at_the_left'] += 1
