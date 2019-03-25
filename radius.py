@@ -10,39 +10,43 @@ def get_boundary(base_variants,  radius, measure, vcf_file_name):
     vcf_file = open_file(vcf_file_name,  'r')
     vcf_reader = vcf.Reader(vcf_file)
     all_vars = {}
+    count = 0
     for record in vcf_reader:
         if record.CHROM not in all_vars:
             all_vars[record.CHROM] = []
         all_vars[record.CHROM].append(record.POS)
+        count += 1
+        if count % 1000 == 0:
+            print('Record #' + record.CHROM + ':' + str(record.POS))
     
     res = []
     for variant in base_variants:
         if variant['pos'] in all_vars[variant['chrm']]:
             rec = {}
-            rec['chrm'] = variant['chrm']
-            rec['pos'] = variant['pos']
+            rec['CHROM'] = variant['CHROM']
+            rec['POS'] = variant['POS']
             if measure == 'variants':
-                ind = all_vars[variant['chrm']][variant['pos']]
+                ind = all_vars[variant['CHROM']][variant['POS']]
                 if ind - radius < 0:
-                    rec['left'] = all_vars[variant['chrm']][0]
+                    rec['left'] = all_vars[variant['CHROM']][0]
                 else:
-                    rec['left'] = all_vars[variant['chrm']][ind-radius]
-                if ind + radius >= len(all_vars[variant['chrm']]):
-                    rec['right'] = all_vars[variant['chrm']][-1]
+                    rec['left'] = all_vars[variant['CHROM']][ind-radius]
+                if ind + radius >= len(all_vars[variant['CHROM']]):
+                    rec['right'] = all_vars[variant['CHROM']][-1]
                 else:
-                    rec['right'] = all_vars[variant['chrm']][ind+radius]
+                    rec['right'] = all_vars[variant['CHROM']][ind+radius]
             else:
-                for pos in all_vars[variant['chrm']]:
-                    if pos >= variant['pos'] - radius and 'left' not in rec:
+                for pos in all_vars[variant['CHROM']]:
+                    if pos >= variant['CHROM'] - radius and 'left' not in rec:
                         rec['left'] = pos
                     if pos > variant['pos'] + radius and 'right' not in rec:
                         ind = all_vars.index(pos)
-                        rec['right'] = all_vars[variant['chrm']][ind - 1]
+                        rec['right'] = all_vars[variant['CHROM']][ind - 1]
                 if 'right' not in rec:
-                    rec['right'] = all_vars[variant['chrm']][-1]
+                    rec['right'] = all_vars[variant['CHROM']][-1]
             res.append(rec)
         else:
-            print('Variant ' + variant['chrm'] + ':' + str(variant['pos']) + ' not found in the vcf-file')
+            print('Variant ' + variant['CHROM'] + ':' + str(variant['POS']) + ' not found in the vcf-file')
             continue
     vcf_file.close()
     return res
@@ -58,8 +62,8 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
         bound['aproved_at_the_left'] = 0
         bound['not_aproved_at_the_right'] = 0
         bound['not_aproved_at_the_left'] = 0
-        bound['the_most_distant_at_the_right'] = bound['right'] - bound['pos']
-        bound['the_most_distant_at_the_left'] = bound['pos'] - bound['left']
+        bound['the_most_distant_at_the_right'] = bound['right'] - bound['POS']
+        bound['the_most_distant_at_the_left'] = bound['POS'] - bound['left']
         bound['the_main_condition_at_the_left'] = 0
         bound['the_main_condition_at_the_right'] = 0
         bound['not_main_condition_right'] = None
@@ -82,9 +86,9 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
                     break
 
         for bound in boundaries:
-            if bound['chrm'] != record.CHROM or bound['left'] > record.POS or bound['right'] < record.POS:
+            if bound['CHROM'] != record.CHROM or bound['left'] > record.POS or bound['right'] < record.POS:
                 continue
-            if record.POS < bound['pos']:
+            if record.POS < bound['POS']:
                 if aproved:
                     bound['aproved_at_the_left'] += 1
                 else:
@@ -93,7 +97,7 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
                     bound['the_main_condition_at_the_left'] += 1
                 else:
                     bound['not_main_condition_left'] = record.POS
-            if record.POS > bound['pos']:
+            if record.POS > bound['POS']:
                 if aproved:
                     bound['aproved_at_the_right'] += 1
                 else:
