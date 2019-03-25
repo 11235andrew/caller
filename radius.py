@@ -17,11 +17,11 @@ def get_boundary(base_variants,  radius, measure, vcf_file_name):
         all_vars[record.CHROM].append(record.POS)
         count += 1
         if count % 1000 == 0:
-            print('Record #' + record.CHROM + ':' + str(record.POS))
+            print('Record #' + str(count))
     
     res = []
     for variant in base_variants:
-        if variant['pos'] in all_vars[variant['chrm']]:
+        if variant['POS'] in all_vars[variant['CHROM']]:
             rec = {}
             rec['CHROM'] = variant['CHROM']
             rec['POS'] = variant['POS']
@@ -71,7 +71,7 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
     for record in vcf_reader:
         count += 1
         if count % 1000 == 0:
-            print('Record #' + record.CHROM + ':' + str(record.POS))
+            print('Record #' + str(count))
         exac = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
         aproved =  exac is not None and exac > frequency and record.QUAL == []
         main = True
