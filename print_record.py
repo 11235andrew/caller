@@ -7,6 +7,7 @@ import gzip
 def get_frequency(csq, allele):
     infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
     format = get_json_from_file(infos_file_name)
+    format = format['Format']
     
     n = None
     freq = None
