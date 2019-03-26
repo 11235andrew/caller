@@ -138,6 +138,9 @@ def json_to_csv(json_file_name,  csv_file_name):
         return
     keys = data[0].keys()
     csv = ''
+    for key in keys:
+        csv += key + '\t'
+    csv += '\n'
     for el in data:
         line = ''
         for key in keys:
