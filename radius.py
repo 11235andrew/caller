@@ -1,6 +1,5 @@
 import vcf
 from print_record import open_file
-from print_record import get_chrms
 from print_record import print_to_file
 from print_record import get_frequency
 from print_record import get_json_from_file
@@ -61,15 +60,16 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
     vcf_reader = vcf.Reader(vcf_file)
     count = 0
     current = 0
+    print('Research of neighborhoods...')
     for bound in boundaries:
-        bound['aproved_at_the_right'] = 0
-        bound['aproved_at_the_left'] = 0
-        bound['not_aproved_at_the_right'] = 0
-        bound['not_aproved_at_the_left'] = 0
+        bound['approved_at_the_right'] = 0
+        bound['approved_at_the_left'] = 0
+        bound['not_approved_at_the_right'] = 0
+        bound['not_approved_at_the_left'] = 0
         bound['the_most_distant_at_the_right'] = bound['right'] - bound['POS']
         bound['the_most_distant_at_the_left'] = bound['POS'] - bound['left']
-        bound['the_main_condition_at_the_left'] = 0
-        bound['the_main_condition_at_the_right'] = 0
+        bound['main_condition_at_the_left'] = 0
+        bound['main_condition_at_the_right'] = 0
         bound['not_main_condition_right'] = None
         bound['not_main_condition_left'] = None
     for record in vcf_reader:
@@ -102,26 +102,26 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
             
             if record.POS < bound['POS']:
                 if aproved:
-                    bound['aproved_at_the_left'] += 1
+                    bound['approved_at_the_left'] += 1
                 else:
-                    bound['not_aproved_at_the_left'] += 1
+                    bound['not_approved_at_the_left'] += 1
                 if main:
-                    bound['the_main_condition_at_the_left'] += 1
+                    bound['main_condition_at_the_left'] += 1
                 else:
                     bound['not_main_condition_left'] = record.POS
             if record.POS > bound['POS']:
                 if aproved:
-                    bound['aproved_at_the_right'] += 1
+                    bound['approved_at_the_right'] += 1
                 else:
-                    bound['not_aproved_at_the_right'] += 1
+                    bound['not_approved_at_the_right'] += 1
                 if main:
-                    bound['the_main_condition_at_the_right'] += 1
+                    bound['main_condition_at_the_right'] += 1
                 else:
                     if bound['not_main_condition_right'] is None:
                         bound['not_main_condition_right'] = record.POS
     vcf_file.close()
     
-    file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighbourhoods.json'
+    file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighborhoods.json'
     print_to_file(boundaries,  file_name)
 
 
@@ -134,7 +134,6 @@ if __name__ == '__main__':
     unaffected = ['bgm0187u1']
     radius = 100
     frequency = 0.1
-    get_chrms(vcf_file_name)
     f_neg = get_json_from_file(f_neg_file_name)
     neighbourhood(f_neg,  affected,  unaffected, 
                                 radius,  'variants',  frequency,  vcf_file_name)
