@@ -4,6 +4,16 @@ import json
 import gzip
 
 
+def get_chrms(vcf_file_name):
+    vcf_file = open_file(vcf_file_name,  'r')
+    vcf_reader = vcf.Reader(vcf_file)
+    chrms = []
+    for record in vcf_reader:
+        if record.CHROM not in chrms:
+            chrms.append(record.CHROM)
+    chrms_file_name = '/home/andrey/work/Caller/caller/case_187/chrms.json'
+    print_to_file(chrms,  chrms_file_name)
+
 def get_frequency(csq, allele):
     infos_file_name = '/home/andrey/work/Caller/caller/case_187/infos.json'
     format = get_json_from_file(infos_file_name)

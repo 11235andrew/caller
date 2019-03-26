@@ -1,5 +1,6 @@
 import vcf
 from print_record import open_file
+from print_record import get_chrms
 from print_record import print_to_file
 from print_record import get_frequency
 from print_record import get_json_from_file
@@ -54,6 +55,8 @@ def get_boundary(base_variants,  radius, measure, vcf_file_name):
 def neighbourhood(base_variants,  affected,  unaffected,  radius,
                                             measure,  frequency,  vcf_file_name):
     boundaries = get_boundary(base_variants,  radius,  measure,  vcf_file_name)
+    chrms_file_name = '/home/andrey/work/Caller/caller/case_187/chrms.json'
+    chrms = get_json_from_file(chrms_file_name)
     vcf_file = open_file(vcf_file_name,  'r')
     vcf_reader = vcf.Reader(vcf_file)
     count = 0
@@ -88,18 +91,15 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
                     main = False
                     break
         
-        after = False
-        n_bound = current
         current0 = current
         for bound in boundaries[current0:]:
             if bound['CHROM'] != record.CHROM or bound['left'] > record.POS or bound['right'] < record.POS:
-                if after:
-                    break
+                if chrms.index(bound['CHROM']) < chrms.index(record.CHROM) or bound['CHROM']==record.CHROM and bound['right'] < record.POS:
+                    current += 1
+                    continue
                 else:
-                    current = n_bound
-            else:
-                after = True
-            n_bound += 1
+                    break
+            
             if record.POS < bound['POS']:
                 if aproved:
                     bound['aproved_at_the_left'] += 1
@@ -134,6 +134,7 @@ if __name__ == '__main__':
     unaffected = ['bgm0187u1']
     radius = 100
     frequency = 0.1
+    get_chrms(vcf_file_name)
     f_neg = get_json_from_file(f_neg_file_name)
     neighbourhood(f_neg,  affected,  unaffected, 
                                 radius,  'variants',  frequency,  vcf_file_name)
