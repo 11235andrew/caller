@@ -132,6 +132,21 @@ def print_to_file(data,  file_name):
     data_file.write(json.dumps(data,  indent=4))
     data_file.close()
 
+def json_to_csv(json_file_name,  csv_file_name):
+    data = get_json_from_file(json_file_name)
+    if data == []:
+        return
+    keys = data.keys()
+    csv = ''
+    for el in data:
+        line = ''
+        for key in keys:
+            line +=str(el[key]) + '\t'
+        csv += line + '\n'
+    csv_file = open_file(csv_file_name,  'w')
+    csv_file.write(csv)
+    csv_file.close()
+
 
 if __name__ == '__main__':
     if len(sys.argv) not in [3,  4]:

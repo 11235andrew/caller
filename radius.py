@@ -3,6 +3,7 @@ from print_record import open_file
 from print_record import print_to_file
 from print_record import get_frequency
 from print_record import get_json_from_file
+from print_record import json_to_csv
 
 
 def get_boundary(base_variants,  radius, measure, vcf_file_name):
@@ -122,7 +123,9 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
     vcf_file.close()
     
     file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighborhoods.json'
+    csv_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighborhoods.csv'
     print_to_file(boundaries,  file_name)
+    json_to_csv(file_name,  csv_file_name)
 
 
 
