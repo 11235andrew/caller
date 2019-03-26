@@ -136,7 +136,7 @@ def json_to_csv(json_file_name,  csv_file_name):
     data = get_json_from_file(json_file_name)
     if data == []:
         return
-    keys = data.keys()
+    keys = data[0].keys()
     csv = ''
     for el in data:
         line = ''
