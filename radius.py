@@ -1,3 +1,4 @@
+import sys
 import vcf
 from print_record import open_file
 from print_record import print_to_file
@@ -124,7 +125,9 @@ def neighbourhood(base_variants,  affected,  unaffected,  radius,
     
     file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighborhoods.json'
     csv_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_neighborhoods.csv'
+    print('Save in the file...')
     print_to_file(boundaries,  file_name)
+    print('Converse to csv...')
     json_to_csv(file_name,  csv_file_name)
 
 
@@ -135,7 +138,13 @@ if __name__ == '__main__':
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
     affected = ['bgm0187a1',  'bgm0187a2',  'bgm0187a3',  'bgm0187a4',  'bgm0187a5']
     unaffected = ['bgm0187u1']
-    radius = 100
+    if len(sys.argv) == 2:
+        radius = int(sys.argv[1])
+        if radius < 0:
+            print('The radius must be positive.')
+            sys.exit()
+    else:
+        radius = 100
     frequency = 0.1
     f_neg = get_json_from_file(f_neg_file_name)
     neighbourhood(f_neg,  affected,  unaffected, 
