@@ -17,15 +17,22 @@ def drop_out():
         freq_count += 1
         unaff_flag = True
         ind = rec['ALT_index'] + 1
+        doute = 0
         for sample in rec['owns']:
             if is_unaffected(sample['sample']):
                 if sample['AD'][ind] != 0:
                     unaff_flag = False
-        if unaff_flag:
-            rec.pop('owns')
-            short_f_neg.append(rec)
+            else:
+                if sample['GT'] not in ['0/1',  '1/0',  '1/1']:
+                    doute += 1
+        if not unaff_flag or doute > 1:
+            continue
+        
+        rec.pop('owns')
+        short_f_neg.append(rec)
     short_f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/short_false_negative.json'
     print_to_file(short_f_neg,  short_f_neg_file_name)
+    print('Rare: ' + str(freq_count) + ' variants')
     print('In short version of false negative ' + str(len(short_f_neg))) + ' variants.'
 
 
