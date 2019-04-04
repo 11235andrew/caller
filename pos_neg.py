@@ -127,14 +127,14 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                 if GQ is None:
                     continue
                 line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
+                if GQ <= 20:
+                    continue
                 if au == 'u':
-                    if GT == '0/0' and GQ > 20:
+                    if GT == '0/0':
                         rec['owns'].append(sample.sample + line)
                     if AD[all+1] != 0:
                         pos_flag = True
                 else:
-                    if GQ <= 20:
-                        continue
                     if GT in ['0/1',  '0/1', '1/1']:
                         rec['owns'].append(sample.sample  + line)
                         neg_flag2 = True
