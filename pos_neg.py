@@ -6,6 +6,14 @@ from print_record import print_to_file
 
 
 
+def sample_to_dict(sample):
+    res = {}
+    res['sample'] = sample.sample
+    res['AD'] = sample.data.AD
+    res['GQ'] = sample.data.GQ
+    res['GT'] = sample.data.GT
+    return res
+
 def get_gnomAD_frequency():
     print('Research frequencies in gnomAD...')
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
@@ -116,6 +124,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
             if frequency is not None and frequency > 0.01:
                 continue
             rec['owns'] = []
+            rec['ALT_index'] = all
             pos_flag = False
             neg_flag = True
             neg_flag2 = False
@@ -129,7 +138,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                 if GQ is None or GQ <= 20:
                     GQ_flag = False
                 line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
-                all_samples.append(sample.sample + line)
+                all_samples.append(sample_to_dict(sample))
                 if au == 'u':
                     if GT == '0/0':
                         rec['owns'].append(sample.sample + line)
