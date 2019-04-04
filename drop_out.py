@@ -3,7 +3,7 @@ from print_record import print_to_file
 
 
 def is_unaffected(name):
-    au = name['-2']
+    au = name[-2]
     return au == 'u'
 
 def drop_out():

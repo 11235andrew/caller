@@ -125,6 +125,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                 continue
             rec['owns'] = []
             rec['ALT_index'] = all
+            rec['calls'] = []
             pos_flag = False
             neg_flag = True
             neg_flag2 = False
@@ -139,6 +140,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                     GQ_flag = False
                 line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
                 all_samples.append(sample_to_dict(sample))
+                rec['calls'].append(sample.sample + line)
                 if au == 'u':
                     if GT == '0/0':
                         rec['owns'].append(sample.sample + line)
