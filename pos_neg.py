@@ -143,9 +143,9 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                         neg_flag = False
             if not GQ_flag:
                 continue
+            rec0 = rec.copy()
+            rec0['owns'] = all_samples
             if neg_flag2 and neg_flag:
-                rec0 = rec.copy()
-                rec0['owns'] = all_samples
                 f_neg.append(rec0)
             if len(rec['owns']) ==  len(record.samples):
                 pos_neg.append(str(rec))

@@ -7,7 +7,7 @@ def drop_out():
     f_neg = get_json_from_file(f_neg_file_name)
     short_f_neg = []
     for rec in f_neg:
-        if rec['gnomAD_AF'] > 0.1:
+        if rec['gnomAD_AF'] > 0.01:
             continue
         short_f_neg.append(rec)
     short_f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/short_false_negative.json'
