@@ -16,7 +16,7 @@ def drop_out():
             continue
         freq_count += 1
         unaff_flag = True
-        ind = rec['ALT_index']
+        ind = rec['ALT_index'] + 1
         for sample in rec['owns']:
             if is_unaffected(sample['sample']):
                 if sample['AD'][ind] != 0:
