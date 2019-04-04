@@ -22,7 +22,7 @@ def drop_out():
                 if sample['AD'][ind] != 0:
                     unaff_flag = False
         if unaff_flag:
-            rec.remove('owns')
+            rec.pop('owns')
             short_f_neg.append(rec)
     short_f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/short_false_negative.json'
     print_to_file(short_f_neg,  short_f_neg_file_name)
