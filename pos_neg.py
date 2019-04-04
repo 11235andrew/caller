@@ -119,6 +119,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
             pos_flag = False
             neg_flag = True
             neg_flag2 = False
+            all_samples = []
             for sample in record.samples:
                 au = sample.sample[-2]
                 GT = sample.data.GT
@@ -127,6 +128,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                 if GQ is None:
                     continue
                 line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
+                all_samples.append(sample.sample + line)
                 if GQ <= 20:
                     continue
                 if au == 'u':
@@ -140,6 +142,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                         neg_flag2 = True
                     if AD[all+1] == 0:
                         neg_flag = False
+            rec['owns'] = all_samples
             if neg_flag2 and neg_flag:
                 f_neg.append(rec)
             if len(rec['owns']) ==  len(record.samples):
