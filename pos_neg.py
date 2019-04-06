@@ -14,6 +14,50 @@ def sample_to_dict(sample):
     res['GT'] = sample.data.GT
     return res
 
+def get_work_version(record,  AFs):
+    rec = {}
+    rec['CHROM'] = record.CHROM
+    rec['POS'] = record.POS
+    rec['AF'] = str(record.INFO['AF'])
+    #rec['QUAL'] = record.QUAL
+    rec['FS'] = record.INFO['FS']
+    rec['QD'] = record.INFO['QD']
+    rec['ExAC_AF'] = []
+    if str(record.POS) in AFs:
+        rec['gnomAD_AF'] = AFs[str(record.POS)]
+    else:
+        rec['gnomAD_AF'] = 'None'
+    alls = range(len(record.INFO['AF']))
+    for all in alls:
+        frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
+        rec['ExAC_AF'].append(frequency)
+    rec['samples'] = []
+    for sample in record.samples:
+        rec['samples'].append(sample_to_dict(sample))
+    return rec
+
+def get_readible_version(record,  AFs):
+    rec = {}
+    rec['CHROM'] = record.CHROM
+    rec['POS'] = record.POS
+    rec['AF'] = str(record.INFO['AF'])
+    #rec['QUAL'] = record.QUAL
+    rec['FS'] = record.INFO['FS']
+    rec['QD'] = record.INFO['QD']
+    rec['ExAC_AF'] = []
+    if str(record.POS) in AFs:
+        rec['gnomAD_AF'] = AFs[str(record.POS)]
+    else:
+        rec['gnomAD_AF'] = 'None'
+    alls = range(len(record.INFO['AF']))
+    for all in alls:
+        frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
+        rec['ExAC_AF'].append(frequency)
+    rec['samples'] = []
+    for sample in record.samples:
+        rec['samples'].append(str(sample))
+    return rec
+
 def get_gnomAD_frequency():
     print('Research frequencies in gnomAD...')
     gnomad = '/data/exp/trifon/vault/xl_BGM0187/fdata.json.gz'
@@ -48,6 +92,9 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
     pos_neg = []
     f_pos = []
     f_neg = []
+    pos_neg_main = []
+    f_pos_main = []
+    f_neg_main = []
     count = 0
     max_qual = 0
     filters = []
@@ -106,31 +153,20 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
         else:
             continue
         
-        rec = {}
-        rec['CHROM'] = record.CHROM
-        rec['POS'] = record.POS
-        rec['AF'] = str(record.INFO['AF'])
-        #rec['QUAL'] = record.QUAL
-        rec['FS'] = record.INFO['FS']
-        rec['QD'] = record.INFO['QD']
-        rec['ExAC_AF'] = []
-        if str(record.POS) in AFs:
-            rec['gnomAD_AF'] = AFs[str(record.POS)]
-        else:
-            rec['gnomAD_AF'] = 'None'
+        rec = get_work_version(record,  AFs)
+        rec_read = get_readible_version(record,  AFs)
         for all in alls:
             frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
             rec['ExAC_AF'].append(frequency)
+            rec_read['ExAC_AF'].append(frequency)
             if frequency is not None and frequency > 0.01:
                 continue
-            rec['owns'] = []
+            owns = []
             rec['ALT_index'] = all
-            rec['calls'] = []
             pos_flag = False
             neg_flag = True
             neg_flag2 = False
             GQ_flag = True
-            all_samples = []
             for sample in record.samples:
                 au = sample.sample[-2]
                 GT = sample.data.GT
@@ -138,30 +174,28 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                 GQ = sample.data.GQ
                 if GQ is None or GQ <= 20:
                     GQ_flag = False
-                line = '(AD:' + str(AD)+ '; GQ:' + str(GQ) + ', GT:' + GT + ')'
-                all_samples.append(sample_to_dict(sample))
-                rec['calls'].append(sample.sample + line)
                 if au == 'u':
                     if GT == '0/0':
-                        rec['owns'].append(sample.sample + line)
+                        owns.append(sample.sample)
                     if AD[all+1] != 0:
                         pos_flag = True
                 else:
                     if GT in ['0/1',  '0/1', '1/1']:
-                        rec['owns'].append(sample.sample  + line)
+                        owns.append(sample.sample)
                         neg_flag2 = True
                     if AD[all+1] == 0:
                         neg_flag = False
             if not GQ_flag:
                 continue
-            rec0 = rec.copy()
-            rec0['owns'] = all_samples
             if neg_flag2 and neg_flag:
-                f_neg.append(rec0)
-            if len(rec['owns']) ==  len(record.samples):
-                pos_neg.append(str(rec))
+                f_neg.append(rec_read)
+                f_neg_main.append(rec)
+            if len(owns) ==  len(record.samples):
+                pos_neg.append(str(rec_read))
+                pos_neg_main.append(rec)
                 if pos_flag:
-                    f_pos.append(rec)
+                    f_pos.append(rec_read)
+                    f_pos_main.append(rec)
                 break
         
 
@@ -183,6 +217,9 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
     print_to_file(pos_neg,  cand_file_name)
     print_to_file(f_pos,  f_pos_file_name)
     print_to_file(f_neg,  f_neg_file_name)
+    print_to_file(pos_neg,  cand_file_name[:-5] + '_main.json')
+    print_to_file(f_pos,  f_pos_file_name[:-5] + '_main.json')
+    print_to_file(f_neg,  f_neg_file_name[:-5] + '_main.json')
     print_to_file(filters,  'case_187/filters.json')
     
 

@@ -1,5 +1,7 @@
+import random
 from print_record import get_json_from_file
 from print_record import print_to_file
+from print_record import json_to_csv
 
 
 def is_unaffected(name):
@@ -7,7 +9,7 @@ def is_unaffected(name):
     return au == 'u'
 
 def drop_out():
-    f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative.json'
+    f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative_main.json'
     f_neg = get_json_from_file(f_neg_file_name)
     short_f_neg = []
     freq_count = 0
@@ -30,15 +32,31 @@ def drop_out():
         
         rec.pop('owns')
         short_f_neg.append(rec)
-    short_f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/short_false_negative.json'
+    short_f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/short_false_negative_main.json'
     print_to_file(short_f_neg,  short_f_neg_file_name)
     print('Rare: ' + str(freq_count) + ' variants')
     print('In short version of false negative ' + str(len(short_f_neg))) + ' variants.'
 
 
 
-
-
+def samples(count,  vars_file_name):
+    vars = get_json_from_file(vars_file_name)
+    res = []
+    if len(vars)<count:
+        print('In this list there are ' + len(vars) + ' variants only.')
+        res = vars
+    else:
+        inds = []
+        for i in range(count):
+            ind = random.random(count)
+            while ind not in inds:
+                ind = random.random(count)
+        for i in range(len(inds)):
+            res.append(vars[inds[i]])
+    new_file_name = vars_file_name[:-5] + '_' + str(count) +'_samples.json'
+    print_to_file(res,  new_file_name)
+    csv_file_name = new_file_name[:-5] + '.csv'
+    json_to_csv(new_file_name,  csv_file_name)
 
 
 
@@ -48,4 +66,6 @@ def drop_out():
 
 if __name__=='__main__':
     drop_out()
+    vars_file_name = '/home/andrey/work/Caller/caller/case_187/candidats_main.json'
+    samples(30, vars_file_name)
     print('Ok.')
