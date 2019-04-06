@@ -55,7 +55,7 @@ def get_readible_version(record,  AFs):
         rec['ExAC_AF'].append(frequency)
     rec['samples'] = []
     for sample in record.samples:
-        rec['samples'].append(str(sample))
+        rec['samples'].append(str(sample_to_dict(sample)))
     return rec
 
 def get_gnomAD_frequency():

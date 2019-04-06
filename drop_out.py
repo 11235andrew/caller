@@ -20,7 +20,7 @@ def drop_out():
         unaff_flag = True
         ind = rec['ALT_index'] + 1
         doute = 0
-        for sample in rec['owns']:
+        for sample in rec['samples']:
             if is_unaffected(sample['sample']):
                 if sample['AD'][ind] != 0:
                     unaff_flag = False
@@ -30,7 +30,6 @@ def drop_out():
         if not unaff_flag or doute > 1:
             continue
         
-        rec.pop('owns')
         short_f_neg.append(rec)
     short_f_neg_file_name = '/home/andrey/work/Caller/caller/case_187/short_false_negative_main.json'
     print_to_file(short_f_neg,  short_f_neg_file_name)
