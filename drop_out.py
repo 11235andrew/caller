@@ -48,7 +48,7 @@ def samples(count,  vars_file_name):
         inds = []
         for i in range(count):
             ind = int(random.random() * count)
-            while ind not in inds:
+            while ind in inds:
                 ind = int(random.random() * count)
         for i in range(len(inds)):
             res.append(vars[inds[i]])
