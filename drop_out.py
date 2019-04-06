@@ -50,6 +50,7 @@ def samples(count,  vars_file_name):
             ind = int(random.random() * count)
             while ind in inds:
                 ind = int(random.random() * count)
+            inds.append(ind)
         for i in range(len(inds)):
             res.append(vars[inds[i]])
     new_file_name = vars_file_name[:-5] + '_' + str(count) +'_samples.json'
