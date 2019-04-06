@@ -47,9 +47,9 @@ def samples(count,  vars_file_name):
     else:
         inds = []
         for i in range(count):
-            ind = random.random(count)
+            ind = int(random.random() * count)
             while ind not in inds:
-                ind = random.random(count)
+                ind = int(random.random() * count)
         for i in range(len(inds)):
             res.append(vars[inds[i]])
     new_file_name = vars_file_name[:-5] + '_' + str(count) +'_samples.json'
