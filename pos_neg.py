@@ -156,13 +156,12 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
         rec = get_work_version(record,  AFs)
         rec_read = get_readible_version(record,  AFs)
         for all in alls:
+            rec['ALT_index'] = all
+            rec_read['ALT_index'] = all
             frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
-            rec['ExAC_AF'].append(frequency)
-            rec_read['ExAC_AF'].append(frequency)
             if frequency is not None and frequency > 0.01:
                 continue
             owns = []
-            rec['ALT_index'] = all
             pos_flag = False
             neg_flag = True
             neg_flag2 = False
@@ -191,7 +190,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
                 f_neg.append(rec_read)
                 f_neg_main.append(rec)
             if len(owns) ==  len(record.samples):
-                pos_neg.append(str(rec_read))
+                pos_neg.append(rec_read)
                 pos_neg_main.append(rec)
                 if pos_flag:
                     f_pos.append(rec_read)
@@ -217,9 +216,9 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
     print_to_file(pos_neg,  cand_file_name)
     print_to_file(f_pos,  f_pos_file_name)
     print_to_file(f_neg,  f_neg_file_name)
-    print_to_file(pos_neg,  cand_file_name[:-5] + '_main.json')
-    print_to_file(f_pos,  f_pos_file_name[:-5] + '_main.json')
-    print_to_file(f_neg,  f_neg_file_name[:-5] + '_main.json')
+    print_to_file(pos_neg_main,  cand_file_name[:-5] + '_main.json')
+    print_to_file(f_pos_main,  f_pos_file_name[:-5] + '_main.json')
+    print_to_file(f_neg_main,  f_neg_file_name[:-5] + '_main.json')
     print_to_file(filters,  'case_187/filters.json')
     
 
