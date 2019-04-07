@@ -1,7 +1,10 @@
+import vcf
 import random
 from print_record import get_json_from_file
 from print_record import print_to_file
 from print_record import json_to_csv
+from print_record import open_file
+from print_record import get_frequency
 
 
 def is_unaffected(name):
@@ -58,6 +61,62 @@ def samples(count,  vars_file_name):
     csv_file_name = new_file_name[:-5] + '.csv'
     json_to_csv(new_file_name,  csv_file_name)
 
+
+def atlas(radius,  base_variants,  vcf_file_name):
+    vcf_file = open_file(vcf_file_name,  'r')
+    vcf_reader = vcf.Reader(vcf_file)
+    res = []
+    for var in base_variants:
+        res.append([])
+    for record in vcf_reader:
+        for k in range(len(base_variants)):
+            var = base_variants[k]
+            if record.CHROM != var['CHROM']:
+                continue
+            if abs(record.POS - var['POS']) > radius:
+                continue
+            rec = {}
+            rec['CHROM'] = record.CHROM
+            rec['remoteness_position'] = record.POS - var['POS']
+            rec['REF'] = str(record.REF)
+            rec['ALT'] = ''
+            for alt in record.ALT:
+                rec['ALT'] += str(alt)
+            quality = ''
+            if record.FILTER == []:
+                quality += 'YES/'
+            else:
+                quality += 'NO/'
+            if 'FS' in record.INFO and record.INFO['FS'] < 30:
+                quality += 'YES/'
+            else:
+                quality += 'NO/'
+            if 'QD' in record.INFO and record.INFO['QD'] > 4:
+                quality += 'YES/'
+            else:
+                quality += 'NO/'
+            GQ_flag = True
+            for sample in record.samples:
+                if sample.data.GQ <= 20:
+                    GQ_flag = False
+                    break
+            if GQ_flag:
+                quality += 'YES'
+            else:
+                quality += 'NO'
+            rec['PASS/FS/QD/GQ'] = quality
+            rec['ExAC_AF'] = ''
+            alls = range(len(record.INFO['AF']))
+            for all in alls:
+                frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
+                rec['ExAC_AF'] += frequency + '/'
+            rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
+            rec['heterozygoty'] = record.heterozygosity
+            res[k].append(rec)
+    
+    for k in range(len(res)):
+        atlas_file_name = '/home/andrey/work/Caller/caller/atlas/chart_'+ str(k) + '.json'
+        print_to_file(res[k],  atlas_file_name)
 
 
 

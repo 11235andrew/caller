@@ -151,6 +151,22 @@ def json_to_csv(json_file_name,  csv_file_name):
     csv_file.close()
 
 
+def json_to_csv_columns(json_file_name):
+    chart = get_json_from_file(json_file_name)
+    names = []
+    if chart == []:
+        return
+    names = chart[0].keys()
+    csv = ''
+    for name in names:
+        csv += name + '\t'
+        for rec in chart:
+            csv += rec[name] + '\t'
+        csv += '\n'
+    csv_file_name = json_file_name[:-5] + '.csv'
+    print_to_file(csv,  csv_file_name)
+
+
 if __name__ == '__main__':
     if len(sys.argv) not in [3,  4]:
         print('Use following format: python print_record.py CHROM POS')
