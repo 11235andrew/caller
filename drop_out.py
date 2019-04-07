@@ -5,6 +5,7 @@ from print_record import print_to_file
 from print_record import json_to_csv
 from print_record import open_file
 from print_record import get_frequency
+from drop_out import json_to_csv_columns
 
 
 def is_unaffected(name):
@@ -117,6 +118,7 @@ def atlas(radius,  base_variants,  vcf_file_name):
     for k in range(len(res)):
         atlas_file_name = '/home/andrey/work/Caller/caller/atlas/chart_'+ str(k) + '.json'
         print_to_file(res[k],  atlas_file_name)
+        json_to_csv_columns(atlas_file_name)
 
 
 
