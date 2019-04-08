@@ -5,7 +5,7 @@ from print_record import print_to_file
 from print_record import json_to_csv
 from print_record import open_file
 from print_record import get_frequency
-from drop_out import json_to_csv_columns
+from print_record import json_to_csv_columns
 
 
 def is_unaffected(name):
