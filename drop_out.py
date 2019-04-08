@@ -130,6 +130,8 @@ if __name__=='__main__':
     drop_out()
     vars_file_name = '/home/andrey/work/Caller/caller/case_187/candidats_main.json'
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
+    print('Generate samples...')
     base_variants = samples(30, vars_file_name)
+    print('Compose atlas...')
     atlas(10000,  base_variants,  vcf_file_name)
     print('Ok.')

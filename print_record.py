@@ -161,7 +161,7 @@ def json_to_csv_columns(json_file_name):
     for name in names:
         csv += name + '\t'
         for rec in chart:
-            csv += rec[name] + '\t'
+            csv += str(rec[name]) + '\t'
         csv += '\n'
     csv_file_name = json_file_name[:-5] + '.csv'
     print_to_file(csv,  csv_file_name)
