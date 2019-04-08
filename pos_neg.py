@@ -159,7 +159,7 @@ def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_f
             rec['ALT_index'] = all
             rec_read['ALT_index'] = all
             frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
-            if frequency is None or frequency > 0.01:
+            if frequency is None: #or frequency > 0.01:
                 continue
             owns = []
             pos_flag = False
