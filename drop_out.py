@@ -85,7 +85,7 @@ def atlas(radius,  base_variants,  vcf_file_name):
             rec = {}
             rec['CHROM'] = record.CHROM
             rec['POS'] = record.POS
-            rec['remoteness_position'] = record.POS - var['POS']
+            rec['remoteness_(base_pairs)'] = record.POS - var['POS']
             rec['REF'] = str(record.REF)
             rec['ALT'] = ''
             for alt in record.ALT:
@@ -120,16 +120,20 @@ def atlas(radius,  base_variants,  vcf_file_name):
                 rec['ExAC_AF'] += str(frequency) + '/'
             rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
             for sample in record.samples:
-                rec[sample.sample + 'zygosity'] = sample.gt_type
+                rec[sample.sample + '_zygosity'] = sample.gt_type
             res[k].append(rec)
     
+    new_res = []
     for k in range(len(res)):
+        new_res.append([])
         for m in range(len(res[k])):
-            res[k][m]['remoteness_variant'] = m - centers[k]
+            res[k][m]['remoteness_(variants)'] = m - centers[k]
+            if abs(m-centers[k]) <= 100:
+                new_res[k].append(res[k][m])
     
     for k in range(len(res)):
         atlas_file_name = '/home/andrey/work/Caller/caller/atlas/chart_'+ str(k) + '.json'
-        print_to_file(res[k],  atlas_file_name)
+        print_to_file(new_res[k],  atlas_file_name)
         json_to_csv_columns(atlas_file_name)
 
 

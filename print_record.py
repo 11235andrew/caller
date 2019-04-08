@@ -63,7 +63,10 @@ def print_short_record(record, freq):
     res['CHROM'] = record.CHROM
     res['POS'] = record.POS
     res['AF'] = record.INFO['AF']
-    res['gnomAD_AF'] = freq['gnomAD_AF']
+    if freq is not None:
+        res['gnomAD_AF'] = freq['gnomAD_AF']
+    else:
+        res['gnomAD_AF'] = None
     
    
     freqs = []
@@ -94,7 +97,10 @@ def print_record(record, freq, format):
     rec_dict['samples'] = samples
     rec_dict['alleles'] = rec_dict['alleles'].__str__()
     rec_dict['ALT'] = rec_dict['ALT'].__str__()
-    rec_dict['gnomAD_AF'] = freq['gnomAD_AF']
+    if freq is not None:
+        rec_dict['gnomAD_AF'] = freq['gnomAD_AF']
+    else:
+        rec_dict['gnomAD_AF'] = None
     csq = []
     for data in rec_dict['INFO']['CSQ']:
         vert = data.split('|')
