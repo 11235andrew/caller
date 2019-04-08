@@ -111,7 +111,7 @@ def atlas(radius,  base_variants,  vcf_file_name):
             alls = range(len(record.INFO['AF']))
             for all in alls:
                 frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
-                rec['ExAC_AF'] += frequency + '/'
+                rec['ExAC_AF'] += str(frequency) + '/'
             rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
             rec['heterozygoty'] = record.heterozygosity
             res[k].append(rec)
