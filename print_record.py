@@ -170,7 +170,9 @@ def json_to_csv_columns(json_file_name):
             csv += str(rec[name]) + '\t'
         csv += '\n'
     csv_file_name = json_file_name[:-5] + '.csv'
-    print_to_file(csv,  csv_file_name)
+    csv_file = open_file(csv_file_name,  'w')
+    csv_file.write(csv)
+    csv_file.close()
 
 
 if __name__ == '__main__':
