@@ -68,8 +68,10 @@ def atlas(radius,  base_variants,  vcf_file_name):
     vcf_file = open_file(vcf_file_name,  'r')
     vcf_reader = vcf.Reader(vcf_file)
     res = []
+    centers = []
     for var in base_variants:
         res.append([])
+        centers.append(None)
     for record in vcf_reader:
         for k in range(len(base_variants)):
             var = base_variants[k]
@@ -77,6 +79,9 @@ def atlas(radius,  base_variants,  vcf_file_name):
                 continue
             if abs(record.POS - var['POS']) > radius:
                 continue
+            if record.POS == var['POS']:
+                centers[k] = len(res[k])
+                print('Chart ' + var['CHROM'] + ':' + str(var['POS']))
             rec = {}
             rec['CHROM'] = record.CHROM
             rec['remoteness_position'] = record.POS - var['POS']
@@ -113,8 +118,12 @@ def atlas(radius,  base_variants,  vcf_file_name):
                 frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
                 rec['ExAC_AF'] += str(frequency) + '/'
             rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
-            rec['heterozygoty'] = record.heterozygosity
+            rec['zygoty'] = record.num_het
             res[k].append(rec)
+    
+    for k in range(len(res)):
+        for m in range(len(res[k])):
+            res[k][m]['remoteness_variant'] = centers[k] - m
     
     for k in range(len(res)):
         atlas_file_name = '/home/andrey/work/Caller/caller/atlas/chart_'+ str(k) + '.json'
