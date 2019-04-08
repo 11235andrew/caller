@@ -51,9 +51,9 @@ def samples(count,  vars_file_name):
     else:
         inds = []
         for i in range(count):
-            ind = int(random.random() * count)
+            ind = int(random.random() * len(vars))
             while ind in inds:
-                ind = int(random.random() * count)
+                ind = int(random.random() * len(vars))
             inds.append(ind)
         for i in range(len(inds)):
             res.append(vars[inds[i]])
@@ -84,6 +84,7 @@ def atlas(radius,  base_variants,  vcf_file_name):
                 print('Chart ' + var['CHROM'] + ':' + str(var['POS']))
             rec = {}
             rec['CHROM'] = record.CHROM
+            rec['POS'] = record.POS
             rec['remoteness_position'] = record.POS - var['POS']
             rec['REF'] = str(record.REF)
             rec['ALT'] = ''
@@ -118,12 +119,13 @@ def atlas(radius,  base_variants,  vcf_file_name):
                 frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
                 rec['ExAC_AF'] += str(frequency) + '/'
             rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
-            rec['zygoty'] = record.num_het
+            for sample in record.samples:
+                rec[sample.sample + 'zygosity'] = sample.gt_type
             res[k].append(rec)
     
     for k in range(len(res)):
         for m in range(len(res[k])):
-            res[k][m]['remoteness_variant'] = centers[k] - m
+            res[k][m]['remoteness_variant'] = m - centers[k]
     
     for k in range(len(res)):
         atlas_file_name = '/home/andrey/work/Caller/caller/atlas/chart_'+ str(k) + '.json'
