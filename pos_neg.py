@@ -22,8 +22,14 @@ def get_work_version(record,  AFs):
     rec['POS'] = record.POS
     rec['AF'] = str(record.INFO['AF'])
     #rec['QUAL'] = record.QUAL
-    rec['FS'] = record.INFO['FS']
-    rec['QD'] = record.INFO['QD']
+    if 'FS' in record.INFO:
+        rec['FS'] = record.INFO['FS']
+    else:
+        rec['FS'] = None
+    if 'QD' in record.INFO:
+        rec['QD'] = record.INFO['QD']
+    else:
+        rec['QD'] = None
     rec['ExAC_AF'] = []
     if str(record.POS) in AFs:
         rec['gnomAD_AF'] = AFs[str(record.POS)]
@@ -44,8 +50,14 @@ def get_readible_version(record,  AFs):
     rec['POS'] = record.POS
     rec['AF'] = str(record.INFO['AF'])
     #rec['QUAL'] = record.QUAL
-    rec['FS'] = record.INFO['FS']
-    rec['QD'] = record.INFO['QD']
+    if 'FS' in record.INFO:
+        rec['FS'] = record.INFO['FS']
+    else:
+        rec['FS'] = None
+    if 'QD' in record.INFO:
+        rec['QD'] = record.INFO['QD']
+    else:
+        rec['QD'] = None
     rec['ExAC_AF'] = []
     if str(record.POS) in AFs:
         rec['gnomAD_AF'] = AFs[str(record.POS)]
@@ -116,8 +128,12 @@ def all_records(vcf_file_name,  f_neg_file_name):
     vcf_reader = vcf.Reader(vcf_file)
     f_neg_main = []
     f_neg = []
+    count = 0
     AFs = get_gnomAD_frequency()
     for record in vcf_reader:
+        count += 1
+        if count % 1000 == 0:
+            print('Record #' + str(count))
         rec = get_work_version(record,  AFs)
         rec_read = get_readible_version(record,  AFs)
         is_neg = is_f_neg(record)
