@@ -3,6 +3,8 @@ import json
 import gzip
 from print_record import get_frequency
 from print_record import print_to_file
+from drop_out import is_unaffected
+from print_record import open_file
 
 
 
@@ -80,6 +82,55 @@ def intersection(list1,  list2):
         if el in list2:
             res.append(el)
     return res
+
+def is_f_neg(record):
+    if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
+        return
+    alls = range(len(record.INFO['AF']))
+    if 'QD' not in record.INFO or record.INFO['QD'] < 4:
+        return
+    if 'FS' not in record.INFO or record.INFO['FS'] > 30:
+        return
+    if record.FILTER != []:
+        return
+    frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
+    if frequency is None:
+        return
+    for all in alls:
+        minor = False
+        for sample in record.samples:
+            if is_unaffected(sample.sample):
+                if sample.gt_type != 0:
+                    return
+            else:
+                if not (sample.gt_type > 0 or sample.gt_type == 0 and sample.data.AD[all+1] > 0):
+                    return
+                if sample.gt_type == 0 and sample.data.AD[all+1]>0:
+                    minor = True
+        if minor:
+            return all
+    return
+    
+def all_records(vcf_file_name,  f_neg_file_name):
+    vcf_file = open_file(vcf_file_name,  'r')
+    vcf_reader = vcf.Reader(vcf_file)
+    f_neg_main = []
+    f_neg = []
+    AFs = get_gnomAD_frequency()
+    for record in vcf_reader:
+        rec = get_work_version(record,  AFs)
+        rec_read = get_readible_version(record,  AFs)
+        is_neg = is_f_neg(record)
+        if is_neg is not None:
+            rec['ALT_index'] = is_neg
+            rec_read['ALT_index'] = is_neg
+            f_neg.append(rec_read)
+            f_neg_main.append(rec)
+    vcf_file.close()
+    print(str(len(f_neg)) + ' false negative records were found.')
+    print_to_file(f_neg,  f_neg_file_name)
+    print_to_file(f_neg_main,  f_neg_file_name[:-5] + '_main.json')
+    
 
 def rude_classificator(vcf_file_name,  cand_file_name, f_pos_file_name,  f_neg_file_name):
     try:
@@ -229,5 +280,6 @@ if __name__ == '__main__':
     f_negative_file_name = '/home/andrey/work/Caller/caller/case_187/false_negative.json'
     f_positive_file_name = '/home/andrey/work/Caller/caller/case_187/false_positive.json'
     candidats_file_name = '/home/andrey/work/Caller/caller/case_187/candidats.json'
-    rude_classificator(vcf_file_name,  candidats_file_name,  f_positive_file_name,  f_negative_file_name)
+    #rude_classificator(vcf_file_name,  candidats_file_name,  f_positive_file_name,  f_negative_file_name)
+    all_records(vcf_file_name,  f_negative_file_name)
     print('Ok.')

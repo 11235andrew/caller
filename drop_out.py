@@ -1,5 +1,6 @@
 import vcf
 import random
+from random import WichmannHill
 from print_record import get_json_from_file
 from print_record import print_to_file
 from print_record import json_to_csv
@@ -44,24 +45,32 @@ def drop_out():
 
 def samples(count,  vars_file_name):
     vars = get_json_from_file(vars_file_name)
-    res = []
-    if len(vars)<count:
-        print('In this list there are ' + len(vars) + ' variants only.')
-        res = vars
-    else:
-        inds = []
-        for i in range(count):
-            ind = int(random.random() * len(vars))
-            while ind in inds:
-                ind = int(random.random() * len(vars))
-            inds.append(ind)
-        for i in range(len(inds)):
-            res.append(vars[inds[i]])
+    #res = []
+    num_list = range(len(vars))
+    r_h = WichmannHill(3948)
+    r_h.shuffle(num_list)
+    new_vars = []
+    for k in num_list[:30]:
+        new_vars.append(vars[k])
+    
+#    if len(vars)<count:
+#        print('In this list there are ' + len(vars) + ' variants only.')
+#        res = vars
+#    else:
+#        inds = []
+#        for i in range(count):
+#            ind = int(random.random() * len(vars))
+#            while ind in inds:
+#                ind = int(random.random() * len(vars))
+#            inds.append(ind)
+#        for i in range(len(inds)):
+#            res.append(vars[inds[i]])
+
     new_file_name = vars_file_name[:-5] + '_' + str(count) +'_samples.json'
-    print_to_file(res,  new_file_name)
+    print_to_file(new_vars,  new_file_name)
     csv_file_name = new_file_name[:-5] + '.csv'
     json_to_csv(new_file_name,  csv_file_name)
-    return res
+    return new_vars
 
 
 def atlas(radius,  base_variants,  vcf_file_name):
