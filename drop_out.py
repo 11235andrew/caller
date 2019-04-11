@@ -95,6 +95,9 @@ def atlas(radius,  base_variants,  vcf_file_name):
             rec['CHROM'] = record.CHROM
             rec['POS'] = record.POS
             rec['remoteness_(base_pairs)'] = record.POS - var['POS']
+            rec['QUAL'] = record.QUAL
+            rec['start'] = record.start
+            rec['end'] = record.end
             rec['REF'] = str(record.REF)
             rec['ALT'] = ''
             for alt in record.ALT:
