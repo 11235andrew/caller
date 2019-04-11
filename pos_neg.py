@@ -108,11 +108,14 @@ def is_f_neg(record):
     if record.FILTER != []:
         return
     for all in alls:
-        frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
-        if frequency is None:
-            continue
+#        frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
+#        if frequency is None:
+#            continue
         minor = False
         for sample in record.samples:
+            if sample.data.GQ is None or sample.data.GQ < 20:
+                minor = False
+                break
             if is_unaffected(sample.sample):
                 if sample.gt_type != 0 or sample.data.AD[all+1] > 0:
                     minor = False
