@@ -23,7 +23,9 @@ def get_work_version(record,  AFs):
     rec['CHROM'] = record.CHROM
     rec['POS'] = record.POS
     rec['AF'] = str(record.INFO['AF'])
-    #rec['QUAL'] = record.QUAL
+    rec['QUAL'] = record.QUAL
+    rec['REF'] = record.REF
+    rec['ALT'] = record.ALT
     if 'FS' in record.INFO:
         rec['FS'] = record.INFO['FS']
     else:
@@ -51,7 +53,9 @@ def get_readible_version(record,  AFs):
     rec['CHROM'] = record.CHROM
     rec['POS'] = record.POS
     rec['AF'] = str(record.INFO['AF'])
-    #rec['QUAL'] = record.QUAL
+    rec['QUAL'] = record.QUAL
+    rec['REF'] = record.REF
+    rec['ALT'] = record.ALT
     if 'FS' in record.INFO:
         rec['FS'] = record.INFO['FS']
     else:
@@ -101,10 +105,10 @@ def is_f_neg(record):
     if record.CHROM == 'chrM' or record.CHROM == 'chrX' or record.CHROM == 'chrY':
         return
     alls = range(len(record.INFO['AF']))
-    if 'QD' not in record.INFO or record.INFO['QD'] < 4:
-        return
-    if 'FS' not in record.INFO or record.INFO['FS'] > 30:
-        return
+#    if 'QD' not in record.INFO or record.INFO['QD'] < 4:
+#        return
+#    if 'FS' not in record.INFO or record.INFO['FS'] > 30:
+#        return
     if record.FILTER != []:
         return
     for all in alls:
@@ -113,9 +117,9 @@ def is_f_neg(record):
 #            continue
         minor = False
         for sample in record.samples:
-            if sample.data.GQ is None or sample.data.GQ < 20:
-                minor = False
-                break
+#            if sample.data.GQ is None or sample.data.GQ < 20:
+#                minor = False
+#                break
             if is_unaffected(sample.sample):
                 if sample.gt_type != 0 or sample.data.AD[all+1] > 0:
                     minor = False
