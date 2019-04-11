@@ -71,7 +71,7 @@ def print_short_record(record, freq):
    
     freqs = []
     for all in range(len(record.INFO['AF'])):
-        frequency = get_frequency(record.INFO['CSQ'], format,  str(record.ALT[all]))
+        frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
         freqs.append(frequency)
     res['ExAC_AF'] = freqs
     
