@@ -26,6 +26,8 @@ def get_work_version(record,  AFs):
     rec['QUAL'] = record.QUAL
     rec['REF'] = str(record.REF)
     rec['ALT'] = str(record.ALT)
+    rec['start'] = record.start
+    rec['end'] = record.end
     if 'FS' in record.INFO:
         rec['FS'] = record.INFO['FS']
     else:
@@ -56,6 +58,8 @@ def get_readible_version(record,  AFs):
     rec['QUAL'] = record.QUAL
     rec['REF'] = str(record.REF)
     rec['ALT'] = str(record.ALT)
+    rec['start'] = record.start
+    rec['end'] = record.end
     if 'FS' in record.INFO:
         rec['FS'] = record.INFO['FS']
     else:
