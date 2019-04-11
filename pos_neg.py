@@ -24,8 +24,8 @@ def get_work_version(record,  AFs):
     rec['POS'] = record.POS
     rec['AF'] = str(record.INFO['AF'])
     rec['QUAL'] = record.QUAL
-    rec['REF'] = record.REF
-    rec['ALT'] = record.ALT
+    rec['REF'] = str(record.REF)
+    rec['ALT'] = str(record.ALT)
     if 'FS' in record.INFO:
         rec['FS'] = record.INFO['FS']
     else:
@@ -54,8 +54,8 @@ def get_readible_version(record,  AFs):
     rec['POS'] = record.POS
     rec['AF'] = str(record.INFO['AF'])
     rec['QUAL'] = record.QUAL
-    rec['REF'] = record.REF
-    rec['ALT'] = record.ALT
+    rec['REF'] = str(record.REF)
+    rec['ALT'] = str(record.ALT)
     if 'FS' in record.INFO:
         rec['FS'] = record.INFO['FS']
     else:
