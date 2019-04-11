@@ -3,6 +3,8 @@ import json
 import gzip
 from print_record import get_frequency
 from print_record import print_to_file
+from print_record import print_record
+from print_record import print_short_record
 from drop_out import is_unaffected
 from print_record import open_file
 
@@ -112,11 +114,13 @@ def is_f_neg(record):
         minor = False
         for sample in record.samples:
             if is_unaffected(sample.sample):
-                if sample.gt_type != 0:
-                    continue
+                if sample.gt_type != 0 or sample.data.AD[all+1] > 0:
+                    minor = False
+                    break
             else:
                 if not (sample.gt_type > 0 or sample.gt_type == 0 and sample.data.AD[all+1] > 0):
-                    continue
+                    minor = False
+                    break
                 if sample.gt_type == 0 and sample.data.AD[all+1]>0:
                     minor = True
         if minor:
