@@ -139,9 +139,9 @@ def atlas(radius,  base_variants,  vcf_file_name):
                         if sample.gt_type == 0 and sample.data.AD[all+1]>0:
                             minor = True
                 if minor:
-                    minors += '+|'
+                    minors += '+/'
                 else:
-                    minors += '-|'
+                    minors += '-/'
             rec['minor_read'] = minors[:-1]
             rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
             for sample in record.samples:
