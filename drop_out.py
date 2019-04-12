@@ -107,29 +107,42 @@ def atlas(radius,  base_variants,  vcf_file_name):
                 quality += 'YES/'
             else:
                 quality += 'NO/'
-            if 'FS' in record.INFO and record.INFO['FS'] < 30:
-                quality += 'YES/'
+            if 'FS' in record.INFO:
+                quality += str(record.INFO['FS']) + '/'
             else:
-                quality += 'NO/'
-            if 'QD' in record.INFO and record.INFO['QD'] > 4:
-                quality += 'YES/'
+                quality += 'None/'
+            if 'QD' in record.INFO:
+                quality += str(record.INFO['QD']) + '/'
             else:
-                quality += 'NO/'
-            GQ_flag = True
+                quality += 'None/'
+            GQ_str = '('
             for sample in record.samples:
-                if sample.data.GQ <= 20:
-                    GQ_flag = False
-                    break
-            if GQ_flag:
-                quality += 'YES'
-            else:
-                quality += 'NO'
+                GQ_str += str(sample.data.GQ) + '|'
+            quality += GQ_str[:-1] + ')'
             rec['PASS/FS/QD/GQ'] = quality
             rec['ExAC_AF'] = ''
             alls = range(len(record.INFO['AF']))
+            minors = ''
             for all in alls:
                 frequency = get_frequency(record.INFO['CSQ'], str(record.ALT[all]))
                 rec['ExAC_AF'] += str(frequency) + '/'
+                minor = False
+                for sample in record.samples:
+                    if is_unaffected(sample.sample):
+                        if sample.data.AD[all+1] > 0:
+                            minor = False
+                            break
+                    else:
+                        if not (sample.gt_type > 0 or sample.gt_type == 0 and sample.data.AD[all+1] > 0):
+                            minor = False
+                            break
+                        if sample.gt_type == 0 and sample.data.AD[all+1]>0:
+                            minor = True
+                if minor:
+                    minors += '+|'
+                else:
+                    minors += '-|'
+            rec['minor_read'] = minors[:-1]
             rec['ExAC_AF'] = rec['ExAC_AF'][:-1]
             for sample in record.samples:
                 rec[sample.sample + '_zygosity'] = sample.gt_type
