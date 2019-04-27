@@ -1,6 +1,6 @@
 import vcf
-import numpy as np
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib.pyplot as plt
 from print_record import open_file
 from print_record import print_to_file
 
