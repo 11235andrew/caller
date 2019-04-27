@@ -22,11 +22,12 @@ def find_breaks(vcf_file_name):
         if chrm != record.CHROM:
             if chrm is not None:
                 all_sign[chrm] = signature
+            homo = {}
             for sample in record.samples:
                 signature[sample.sample] = []
+                homo[sample.sample] = 0
             chrm = record.CHROM
             print(chrm)
-            homo ={}
             segment = 0
         
         if int(record.POS / step) > segment:
