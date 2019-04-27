@@ -40,6 +40,7 @@ def find_breaks(vcf_file_name):
         for sample in record.samples:
             if sample.gt_type == 2:
                 homo[sample.sample] += 1
+    all_sign[chrm] = signature
     res_file_name = '/home/andrey/work/Caller/caller/case_187/signature.json'
     print_to_file(all_sign,  res_file_name)
 
