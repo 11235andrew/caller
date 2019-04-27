@@ -1,5 +1,4 @@
 import vcf
-import random
 from random import WichmannHill
 from print_record import get_json_from_file
 from print_record import print_to_file
@@ -50,7 +49,7 @@ def samples(count,  vars_file_name):
     r_h = WichmannHill(3948)
     r_h.shuffle(num_list)
     new_vars = []
-    for k in num_list[:30]:
+    for k in num_list[:count]:
         new_vars.append(vars[k])
     
 #    if len(vars)<count:
