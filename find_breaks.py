@@ -1,8 +1,8 @@
 import vcf
-#import numpy as np
-#import matplotlib.pyplot as plt
+import sys
 from print_record import open_file
 from print_record import print_to_file
+
 
 
 #def func(x):
@@ -14,7 +14,7 @@ def find_breaks(vcf_file_name):
     all_sign = {}
     signature = {}
     chrm = None
-    step = 500000
+    step = 100000
     for record in vcf_reader:
         if record.CHROM in ['chrM',  'chrX',  'chrY']:
             continue
@@ -42,16 +42,6 @@ def find_breaks(vcf_file_name):
                 homo[sample.sample] += 1
     res_file_name = '/home/andrey/work/Caller/caller/case_187/signature.json'
     print_to_file(all_sign,  res_file_name)
-    
-#    X = np.linspace(-2.5,  2.5,  50)
-#    Y = func(X)
-#    print('X: ' + str(X))
-#    print('Y: ' + str(Y))
-#    plt.plot(X,  Y)
-    
-
-
-
 
 
 
