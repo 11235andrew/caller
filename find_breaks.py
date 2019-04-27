@@ -27,12 +27,11 @@ def find_breaks(vcf_file_name):
                 signature[sample.sample] = []
                 homo[sample.sample] = 0
             chrm = record.CHROM
-            print(chrm)
             segment = 0
         
         if int(record.POS / step) > segment:
             segment = int(record.POS / step)
-            print('Segment: ' + str(segment))
+            print('Chromosom: ' + chrm + ', Segment: ' + str(segment))
             for sample in record.samples:
                 key = sample.sample
                 signature[key].append(homo[key])
@@ -42,7 +41,7 @@ def find_breaks(vcf_file_name):
             if sample.gt_type == 2:
                 homo[sample.sample] += 1
     res_file_name = '/home/andrey/work/Caller/caller/case_187/signature.json'
-    print_to_file(signature,  res_file_name)
+    print_to_file(sign_all,  res_file_name)
     
 #    X = np.linspace(-2.5,  2.5,  50)
 #    Y = func(X)
