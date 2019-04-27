@@ -14,7 +14,7 @@ def find_breaks(vcf_file_name):
     all_sign = {}
     signature = {}
     chrm = None
-    step = 100000
+    step = 10000
     for record in vcf_reader:
         if record.CHROM in ['chrM',  'chrX',  'chrY']:
             continue
