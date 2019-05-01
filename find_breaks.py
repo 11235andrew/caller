@@ -5,10 +5,19 @@ from print_record import print_to_file
 
 
 
-#def func(x):
-#    return x*x*x +3* x*x -2*x+1
+def homo(sample):
+    if sample.gt_type == 2:
+        return 1
+    else:
+        return 0
 
-def find_breaks(vcf_file_name):
+def noise(sample):
+    if sample.gt_type is None:
+        return 1
+    else:
+        return 0
+
+def find_breaks(vcf_file_name, res_file_name, func):
     vcf_file = open_file(vcf_file_name,  'r')
     vcf_reader = vcf.Reader(vcf_file)
     all_sign = {}
@@ -38,10 +47,8 @@ def find_breaks(vcf_file_name):
                 homo[key] = 0
         
         for sample in record.samples:
-            if sample.gt_type == 2:
-                homo[sample.sample] += 1
+            homo[sample.sample] += func(sample)
     all_sign[chrm] = signature
-    res_file_name = '/home/andrey/work/Caller/caller/case_187/signature.json'
     print_to_file(all_sign,  res_file_name)
 
 
@@ -58,5 +65,12 @@ def find_breaks(vcf_file_name):
 
 if __name__ == '__main__':
     vcf_file_name = '/data/bgm/cases/bgm0187/bgm0187_wes_run2_xbrowse.vep.vcf'
-    find_breaks(vcf_file_name)
+    if sys.argv[1] == '--homo':
+        res_file_name = '/home/andrey/work/Caller/caller/case_187/signature.json'
+        find_breaks(vcf_file_name,  res_file_name,  homo)
+    elif sys.argv[1] == '--noise':
+        res_file_name = '/home/andrey/work/Caller/caller/case_187/noise.json'
+        find_breaks(vcf_file_name,  res_file_name,  noise)
+    else:
+        print('Unknown key: ' + sys.argv[1])
     print('Ok')
