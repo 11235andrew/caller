@@ -1,5 +1,6 @@
 import vcf
 import sys
+from copy import deepcopy
 from print_record import open_file
 from print_record import print_to_file
 
@@ -23,14 +24,14 @@ def find_breaks(vcf_file_name, res_file_name, func):
     all_sign = {}
     signature = {}
     chrm = None
-    step = 10000
+    step = 100000
     for record in vcf_reader:
         if record.CHROM in ['chrM',  'chrX',  'chrY']:
             continue
         
         if chrm != record.CHROM:
             if chrm is not None:
-                all_sign[chrm] = signature
+                all_sign[chrm] = deepcopy(signature)
             homo = {}
             for sample in record.samples:
                 signature[sample.sample] = []
